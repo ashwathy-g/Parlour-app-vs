@@ -37,6 +37,9 @@ public class  ParlourRegModel
     @Column(name = "email")
     private String email;
 
+    @Column(name = "otp")
+    private String otp;
+
     @Column(name = "image",columnDefinition = "bytea")
     private byte[]image;
 

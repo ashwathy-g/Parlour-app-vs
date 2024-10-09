@@ -24,13 +24,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @CrossOrigin
 @Service
 @Slf4j
-public class ParlourService
-{
+public class ParlourService {
     @Autowired
     private ParlourRepository parlourRepository;
 
@@ -50,6 +50,8 @@ public class ParlourService
     OfferRepository offerRepository;
     @Autowired
     OfferCategoryRepository offerCategoryRepository;
+    @Autowired
+    EmailService emailService;
 
 
     public ParlourRegModel registerParlour(ParlourRegModel parlourRegModel) {
@@ -59,8 +61,7 @@ public class ParlourService
         return parlourRepository.save(parlourRegModel);
     }
 
-    public  String authenticate(String email,String password)
-    {
+    public String authenticate(String email, String password) {
         UserDetails userDetails = customerUserDetailsService.loadUserByUsername(email);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             return jwtUtil.generateToken(userDetails);
@@ -68,8 +69,6 @@ public class ParlourService
             return null;
         }
     }
-
-
 
 
     public ParlourRegModel getParlourByEmailAndPassword(String email, String password) {
@@ -185,7 +184,8 @@ public class ParlourService
                     itemDto.setSubCategoryImage(subCategory.getImage());
                     itemDto.setSubSubCategoryId(itemRegModel.getSubSubCategoryId());
                     itemDto.setSubSubCategoryName(subSubCategory.getName());
-                    itemDto.setSubSubCategoryImage(subSubCategory.getImage());                    itemDtoList.add(itemDto);
+                    itemDto.setSubSubCategoryImage(subSubCategory.getImage());
+                    itemDtoList.add(itemDto);
 
                 }
                 parlourDetailsDTO.setItems(itemDtoList);
@@ -208,6 +208,7 @@ public class ParlourService
         }
         return new ResponseEntity<>(parlourDetailsDTOList, HttpStatus.OK);
     }
+
     public ResponseEntity<List<OfferDto>> getOffersByParlourId(Long parlourId) {
         List<OfferDto> offerDtoList = new ArrayList<>();
         List<OfferRegModel> offerRegModelList = offerRepository.findByParlourId(parlourId);
@@ -275,16 +276,12 @@ public class ParlourService
     }
 
 
-            public void deleteParlourById(Long id)
-    {
-        if (parlourRepository.existsById(id))
-        {
+    public void deleteParlourById(Long id) {
+        if (parlourRepository.existsById(id)) {
             parlourRepository.deleteById(id);
-        }else {
-            throw new RuntimeException("Parlour with ID"  + id + "not found .");
+        } else {
+            throw new RuntimeException("Parlour with ID" + id + "not found .");
         }
     }
 
-
 }
-

@@ -4,6 +4,7 @@ import com.example.ParlourApp.dto.*;
 import com.example.ParlourApp.items.ItemRegModel;
 import com.example.ParlourApp.jwt.CustomerUserDetailsService;
 import com.example.ParlourApp.jwt.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @CrossOrigin
@@ -35,6 +37,11 @@ public class ParlourController {
     PasswordEncoder passwordEncoder;
     @Autowired
     ParlourRepository parlourRepository;
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    OtpService otpService;
 
     @PostMapping("/ParlourReg")
     public ResponseEntity<ParlourRegModel> registerParlour(@RequestParam("parlourName") String parlourName,
@@ -112,6 +119,44 @@ public class ParlourController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
+        @PostMapping("/generate_otp")
+        public ResponseEntity<Map<String, Object>> generateOtp (@RequestBody ForgotPasswordRequest request)
+        {
+            String email = request.getEmail();
+            String otp = otpService.generateOtp(email);
+            emailService.sendOtpEmail(email, otp);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "OTP sent successfully");
+            return ResponseEntity.ok(response);
+        }
+
+        @PostMapping("/forgot_password")
+        public ResponseEntity<Map<String,Object>>forgotPassword(@RequestBody ForgotPasswordRequest request)
+        {
+            String email = request.getEmail();
+            String otp = request.getOtp();
+            String newPassword = request.getNewPassword();
+            Optional<ParlourRegModel> optionalParlour = parlourRepository.findByEmail(email);
+            if (optionalParlour.isPresent()) {
+                ParlourRegModel parlour = optionalParlour.get();
+                if (parlour.getOtp().equals(otp)) {
+                    parlour.setPassword(passwordEncoder.encode(newPassword));
+                    parlourRepository.save(parlour);
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("message", "Password reset successfully");
+                    return ResponseEntity.ok(response);
+                } else {
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("error", "Invalid OTP");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+                }
+            } else {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Parlour not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            }
+        }
+
 
 
     @GetMapping("/ParlourStatus/{parlourId}")
