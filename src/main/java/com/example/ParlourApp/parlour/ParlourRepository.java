@@ -21,5 +21,6 @@ public interface ParlourRepository extends JpaRepository<ParlourRegModel,Long>
     @Query("SELECT p FROM ParlourRegModel p WHERE LOWER(p.email) = LOWER(:email)")
     Optional<ParlourRegModel> findByEmailIgnoreCase(@Param("email") String email);
 
+    Optional<ParlourRegModel> findByPhoneNumber(String phoneNumber);
 }
 

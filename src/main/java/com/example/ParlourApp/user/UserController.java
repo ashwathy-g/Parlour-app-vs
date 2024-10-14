@@ -1,6 +1,9 @@
 package com.example.ParlourApp.user;
 
 import com.example.ParlourApp.jwt.JwtUtil;
+import com.example.ParlourApp.parlour.ParlourRegModel;
+import com.example.ParlourApp.parlour.ParlourRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +25,16 @@ public class UserController {
     UserService userService;
     @Autowired
     JwtUtil jwtUtil;
+    @Autowired
+    ParlourRepository parlourRepository;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping(path = "/UserReg")
     public ResponseEntity<?> register(@RequestBody UserRegModel userRegModel) {
-        UserRegModel registeredUser = userService.registerUser(userRegModel.getFullName(),  userRegModel.getGender(), userRegModel.getPassword(), userRegModel.getEmail(), userRegModel.getPhoneNumber());
+        UserRegModel registeredUser = userService.registerUser(userRegModel.getFullName(), userRegModel.getGender(), userRegModel.getPassword(), userRegModel.getEmail(), userRegModel.getPhoneNumber());
         if (registeredUser == null) {
             // Check if the reason for failure is a duplicate phone number or email
             if (userService.isUserExistsByPhoneNumber(userRegModel.getPhoneNumber())) {
@@ -40,11 +48,7 @@ public class UserController {
         return ResponseEntity.ok("User registered successfully.");
     }
 
-
-
-
-
-        @PostMapping(path = "/UserLogin")
+    @PostMapping(path = "/UserLogin")
     public ResponseEntity<?> login(@RequestBody UserRegModel userRegModel) {
         UserRegModel authenticatedUser = userService.authenticate(userRegModel.getPhoneNumber(), userRegModel.getPassword());
         if (authenticatedUser != null) {
@@ -58,5 +62,32 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
         }
     }
-}
 
+    @GetMapping("/location")
+    public ResponseEntity<String> receiveLocation(@RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
+        session.setAttribute("latitude", latitude);
+        session.setAttribute("longitude", longitude);
+        System.out.println("Location saved :Latitude= " + latitude + ",Longitude= " + longitude);
+        return ResponseEntity.ok("Location saved in session .");
+
+    }
+
+    @GetMapping("/userLocation")
+    public ResponseEntity<List<ParlourRegModel>> useLocation(HttpSession session) {
+        Double latitude = (Double) session.getAttribute("latitude");
+        Double longitude = (Double) session.getAttribute("longitude");
+
+        if (latitude != null && longitude != null) {
+            List<ParlourRegModel> nearbyParlours = userService.findNearbyParlours(latitude, longitude, 10.0);
+
+            if (nearbyParlours.isEmpty()) {
+                return ResponseEntity.ok(nearbyParlours);
+            }
+
+            return ResponseEntity.ok(nearbyParlours);
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+}

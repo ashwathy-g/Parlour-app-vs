@@ -1,11 +1,15 @@
 package com.example.ParlourApp.user;
 
+import com.example.ParlourApp.parlour.ParlourRegModel;
+import com.example.ParlourApp.parlour.ParlourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -13,9 +17,16 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ParlourRepository parlourRepository;
+
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    public UserService(ParlourRepository parlourRepository)
+    {
+        this.parlourRepository=parlourRepository;
+    }
 
     public UserRegModel registerUser(String fullName, String gender, String password, String email, String phoneNumber) {
         if (fullName == null || gender == null || password == null || email == null || phoneNumber == null) {
@@ -62,12 +73,41 @@ public class UserService {
         }
         return null;
     }
+    public List<ParlourRegModel> findNearbyParlours(double userLat, double userLon, double radiusInKm) {
+        List<ParlourRegModel> allParlours = parlourRepository.findAll();
+        List<ParlourRegModel> nearbyParlours = new ArrayList<>();
+
+        for (ParlourRegModel parlour : allParlours) {
+            Double parlourLat = parlour.getLatitude();
+            Double parlourLon = parlour.getLongitude();
+            if (parlourLat==null||parlourLon==null)
+            {
+                System.out.println("Skipping parlour with null coordinates :" + parlour.getParlourName());
+                continue;
+            }
+
+            double distance = calculateDistance(userLat, userLon, parlourLat,parlourLon);
+            if (distance <= radiusInKm) {
+                nearbyParlours.add(parlour);
+            }
+        }
+
+        return nearbyParlours;
+    }
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS = 6371; // Radius of Earth in kilometers
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c; // Distance in kilometers
+    }
 }
-//        }else {
-//            if (userRepository.findFirstByFullName(fullName).isPresent())
-//            {
-//                System.out.println("Duplicate login");
-//                return null;
-//            }
+
+
 
 

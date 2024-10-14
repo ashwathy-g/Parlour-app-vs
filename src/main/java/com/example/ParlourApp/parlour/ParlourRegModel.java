@@ -12,7 +12,6 @@ import java.util.List;
 
 @CrossOrigin
 @Data
-
 @Entity
 @Table(name = "PARLOUR")
 

@@ -75,6 +75,8 @@ public class SecurityConfig
                                 .requestMatchers("/DashBoard/times").permitAll()
                                 .requestMatchers("/DashBoard/prices").permitAll()
                                 .requestMatchers("/DashBoard/statuses").permitAll()
+                                .requestMatchers("/user/location").permitAll()
+                                .requestMatchers("/user/userLocation").permitAll()
 
 
                         .anyRequest().authenticated())

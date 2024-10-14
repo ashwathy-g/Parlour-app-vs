@@ -55,6 +55,15 @@ public class ParlourService {
 
 
     public ParlourRegModel registerParlour(ParlourRegModel parlourRegModel) {
+
+        if (parlourRepository.findByEmail(parlourRegModel.getEmail()).isPresent())
+        {
+            throw new RuntimeException("Email already exists.Please use a different email.");
+        }
+        if (parlourRepository.findByPhoneNumber(parlourRegModel.getPhoneNumber()).isPresent())
+        {
+            throw new RuntimeException("Phone number already exists.Please use a different phone number.");
+        }
         parlourRegModel.setPassword(passwordEncoder.encode(parlourRegModel.getPassword()));
         parlourRegModel.getRoles().add("ROLE_PARLOUR");
         parlourRegModel.setStatus(0);

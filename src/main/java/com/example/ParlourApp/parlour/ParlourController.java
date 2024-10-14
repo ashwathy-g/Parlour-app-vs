@@ -44,7 +44,7 @@ public class ParlourController {
     OtpService otpService;
 
     @PostMapping("/ParlourReg")
-    public ResponseEntity<ParlourRegModel> registerParlour(@RequestParam("parlourName") String parlourName,
+    public ResponseEntity<?> registerParlour(@RequestParam("parlourName") String parlourName,
                                                            @RequestParam("phoneNumber") String phoneNumber,
                                                            @RequestParam("password") String password,
                                                            @RequestParam("email") String email,
@@ -57,40 +57,45 @@ public class ParlourController {
                                                            @RequestParam("latitude")Double latitude,
                                                            @RequestParam("longitude")Double longitude,
                                                            @RequestParam("description") String description)throws IOException {
-        ParlourRegModel parlourRegModel = new ParlourRegModel();
-        parlourRegModel.setParlourName(parlourName);
-        parlourRegModel.setPhoneNumber(phoneNumber);
-        parlourRegModel.setPassword(passwordEncoder.encode(password));
-        parlourRegModel.setEmail(email);
-        try(InputStream imageInputStream=image.getInputStream())
-        {
-            byte[]imageBytes=imageInputStream.readAllBytes();
+        try {
+            ParlourRegModel parlourRegModel = new ParlourRegModel();
+            parlourRegModel.setParlourName(parlourName);
+            parlourRegModel.setPhoneNumber(phoneNumber);
+            parlourRegModel.setPassword(passwordEncoder.encode(password));
+            parlourRegModel.setEmail(email);
             parlourRegModel.setImage(image.getBytes());
+            parlourRegModel.setCoverImage(coverImage.getBytes());
+            parlourRegModel.setLicenseNumber(licenseNumber);
+            parlourRegModel.setLicenseImage(licenseImage.getBytes());
+//            try (InputStream imageInputStream = image.getInputStream()) {
+//                byte[] imageBytes = imageInputStream.readAllBytes();
+//                parlourRegModel.setImage(image.getBytes());
+//            }
+//            try (InputStream coverImageInputStream = coverImage.getInputStream()) {
+//                byte[] coverImageBytes = coverImageInputStream.readAllBytes();
+//                parlourRegModel.setCoverImage(coverImageBytes);
+//
+//            }
+//
+//            parlourRegModel.setLicenseNumber(licenseNumber);
+//            try (InputStream licenseInputStream = licenseImage.getInputStream()) {
+//                byte[] licenseBytes = licenseInputStream.readAllBytes();
+//                parlourRegModel.setLicenseImage(licenseBytes);
+//            }
+
+            parlourRegModel.setRatings(ratings);
+            parlourRegModel.setLocation(location);
+            parlourRegModel.setLatitude(latitude);
+            parlourRegModel.setLongitude(longitude);
+            parlourRegModel.setDescription(description);
+
+
+            ParlourRegModel registeredParlour = parlourService.registerParlour(parlourRegModel);
+            return ResponseEntity.ok(registeredParlour);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error:"  +e.getMessage());
         }
-        try (InputStream coverImageInputStream=coverImage.getInputStream())
-        {
-            byte[]coverImageBytes=coverImageInputStream.readAllBytes();
-            parlourRegModel.setCoverImage(coverImageBytes);
-
-        }
-
-        parlourRegModel.setLicenseNumber(licenseNumber);
-        try (InputStream licenseInputStream = licenseImage.getInputStream()) {
-            byte[] licenseBytes = licenseInputStream.readAllBytes();
-            parlourRegModel.setLicenseImage(licenseBytes);
-        }
-
-        parlourRegModel.setRatings(ratings);
-        parlourRegModel.setLocation(location);
-        parlourRegModel.setLatitude(latitude);
-        parlourRegModel.setLongitude(longitude);
-        parlourRegModel.setDescription(description);
-
-
-        ParlourRegModel registeredParlour = parlourService.registerParlour(parlourRegModel);
-        return ResponseEntity.ok(registeredParlour);
     }
-
 
     @PostMapping("/ParlourLogin")
     public ResponseEntity<Map<String, Object>> login(@RequestBody ParlourLogin parlourLogin) {
