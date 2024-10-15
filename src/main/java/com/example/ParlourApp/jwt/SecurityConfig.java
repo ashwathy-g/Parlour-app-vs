@@ -71,11 +71,11 @@ public class SecurityConfig
                                 .requestMatchers("/admin/allRegisteredParlour").permitAll()
                                 .requestMatchers("/parlour/getAllParlours").permitAll()
                                 .requestMatchers("/parlour/{id}").permitAll()
+                                .requestMatchers("/parlour/ParlourStatus/{parlourId}").permitAll()
                                 .requestMatchers("/DashBoard/ids").permitAll()
                                 .requestMatchers("/DashBoard/times").permitAll()
                                 .requestMatchers("/DashBoard/prices").permitAll()
                                 .requestMatchers("/DashBoard/statuses").permitAll()
-                                .requestMatchers("/user/location").permitAll()
                                 .requestMatchers("/user/userLocation").permitAll()
 
 

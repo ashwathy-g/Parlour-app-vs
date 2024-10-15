@@ -63,21 +63,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/location")
-    public ResponseEntity<String> receiveLocation(@RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        session.setAttribute("latitude", latitude);
-        session.setAttribute("longitude", longitude);
-        System.out.println("Location saved :Latitude= " + latitude + ",Longitude= " + longitude);
-        return ResponseEntity.ok("Location saved in session .");
-
-    }
-
     @GetMapping("/userLocation")
-    public ResponseEntity<List<ParlourRegModel>> useLocation(HttpSession session) {
-        Double latitude = (Double) session.getAttribute("latitude");
-        Double longitude = (Double) session.getAttribute("longitude");
-
-        if (latitude != null && longitude != null) {
+    public ResponseEntity<List<ParlourRegModel>> useLocation(@RequestParam double latitude, @RequestParam double longitude) {
+        {
             List<ParlourRegModel> nearbyParlours = userService.findNearbyParlours(latitude, longitude, 10.0);
 
             if (nearbyParlours.isEmpty()) {
@@ -85,9 +73,7 @@ public class UserController {
             }
 
             return ResponseEntity.ok(nearbyParlours);
-        } else {
-            return ResponseEntity.badRequest().body(null);
         }
     }
-
 }
+

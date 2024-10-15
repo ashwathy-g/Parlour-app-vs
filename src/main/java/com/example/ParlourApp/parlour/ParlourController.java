@@ -266,23 +266,31 @@ public class ParlourController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String>deleteParlour(@PathVariable Long id)
-    {
-        try
-        {
-            parlourService.deleteParlourById(id);
-            return ResponseEntity.ok("Parlour deleted successfully.");
+    public ResponseEntity<String>deleteParlour(@PathVariable Long id,@RequestBody Map<String,String> request) {
+        try {
+            String providedPassword = request.get("password");
+            ParlourRegModel parlourRegModel = parlourService.getParlourById(id);
+            if (parlourRegModel == null) {
+                return ResponseEntity.status(404).body("Parlour not found .");
+            }
+            if (!parlourRegModel.getPassword().equals(providedPassword)) {
+                return ResponseEntity.status(403).body("Invalid password .");
+            }
 
+            {
+                parlourService.deleteParlourById(id);
+                return ResponseEntity.ok("Parlour deleted successfully.");
+
+            }
         }
-        catch (RuntimeException e)
-        {
-            return ResponseEntity.status(404).body(e.getMessage());
+        catch(RuntimeException e)
+            {
+                return ResponseEntity.status(404).body(e.getMessage());
+            }
         }
+
+
     }
-
-
-
-}
 
 
 

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @Service
@@ -73,27 +74,16 @@ public class UserService {
         }
         return null;
     }
-    public List<ParlourRegModel> findNearbyParlours(double userLat, double userLon, double radiusInKm) {
+    public List<ParlourRegModel> findNearbyParlours(double userLatitude, double userLongitude, double radiusInKm) {
         List<ParlourRegModel> allParlours = parlourRepository.findAll();
-        List<ParlourRegModel> nearbyParlours = new ArrayList<>();
+        return allParlours.stream().filter(parlourRegModel -> parlourRegModel.getLatitude() != null && parlourRegModel.getLongitude() != null)
+                .filter(parlourRegModel -> {
 
-        for (ParlourRegModel parlour : allParlours) {
-            Double parlourLat = parlour.getLatitude();
-            Double parlourLon = parlour.getLongitude();
-            if (parlourLat==null||parlourLon==null)
-            {
-                System.out.println("Skipping parlour with null coordinates :" + parlour.getParlourName());
-                continue;
-            }
-
-            double distance = calculateDistance(userLat, userLon, parlourLat,parlourLon);
-            if (distance <= radiusInKm) {
-                nearbyParlours.add(parlour);
-            }
-        }
-
-        return nearbyParlours;
+                    double distance = calculateDistance(userLatitude, userLongitude, parlourRegModel.getLatitude(), parlourRegModel.getLongitude());
+                    return distance <= radiusInKm;
+                }).collect(Collectors.toList());
     }
+
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         final int EARTH_RADIUS = 6371; // Radius of Earth in kilometers
 
