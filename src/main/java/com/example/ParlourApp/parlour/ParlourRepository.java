@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ParlourRepository extends JpaRepository<ParlourRegModel,Long>
@@ -22,5 +23,7 @@ public interface ParlourRepository extends JpaRepository<ParlourRegModel,Long>
     Optional<ParlourRegModel> findByEmailIgnoreCase(@Param("email") String email);
 
     Optional<ParlourRegModel> findByPhoneNumber(String phoneNumber);
+
+    List<ParlourRegModel> findByDeletionRequestedTrue();
 }
 

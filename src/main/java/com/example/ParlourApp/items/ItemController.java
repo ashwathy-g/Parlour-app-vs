@@ -116,7 +116,7 @@ public class ItemController
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
-    @PutMapping("/{itemId}")
+    @PutMapping("update/{itemId}")
     public ResponseEntity<ItemRegModel> updateItem(
             @PathVariable Long itemId,
             @RequestParam("itemName") String itemName,
@@ -132,7 +132,7 @@ public class ItemController
         Optional<ItemRegModel> updatedItem = itemService.updateItem(itemId, itemName, itemImage, price, categoryId, subCategoryId,subSubCategoryId,parlourId, serviceTime, description);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("delete/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();

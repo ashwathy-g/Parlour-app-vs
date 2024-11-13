@@ -25,4 +25,20 @@ public class EmailService {
         mailMessage.setText("Your OTP is :" + otp);
         javaMailSender.send(mailMessage);
     }
+
+    public void sendStatusEmail(String to,String subject,String message)
+    {
+        SimpleMailMessage mailMessage=new SimpleMailMessage();
+        mailMessage.setTo(to);
+        mailMessage.setSubject(subject);
+        mailMessage.setText(message);
+        javaMailSender.send(mailMessage);
+    }
+    public void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        javaMailSender.send(message);
+    }
 }

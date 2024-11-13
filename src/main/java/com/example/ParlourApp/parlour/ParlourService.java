@@ -293,4 +293,8 @@ public class ParlourService {
         }
     }
 
+   public ParlourRegModel save(ParlourRegModel parlourRegModel)
+   {
+       return parlourRepository.save(parlourRegModel);
+   }
 }

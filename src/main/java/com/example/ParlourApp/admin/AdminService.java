@@ -62,17 +62,41 @@ public class AdminService {
         return parlourRepository.findAll();
     }
     public boolean approveParlour(Long id, Integer status) {
-        Optional<ParlourRegModel> optionalParlour = parlourRepository.findById(id);
+        ParlourRegModel parlourRegModel = parlourRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Invalid Parlour ID : " +id));
 
-        if (optionalParlour.isPresent()) {
-            ParlourRegModel existingParlour = optionalParlour.get();
-            existingParlour.setStatus(status); // Set the status to the provided status
+        parlourRegModel.setStatus(status);
+        parlourRepository.save(parlourRegModel);
+        return true;
+    }
+    public String getParlourEmailById(Long id)
+    {
+        return parlourRepository.findById(id)
+                .map(ParlourRegModel::getEmail).orElseThrow(()-> new IllegalArgumentException("Invalid parlour ID: " + id));
+    }
 
-            parlourRepository.save(existingParlour);
-            return true;
-        } else {
-            return false;
+    public void deleteParlourById(Long id)
+    {
+        if (!parlourRepository.existsById(id))
+        {
+           throw new RuntimeException("Parlour not found .");
+
         }
+        parlourRepository.deleteById(id);
+    }
+    public ParlourRegModel getParlourById(Long id)
+    {
+        return parlourRepository.findById(id).orElse(null);
+    }
+
+
+    public List<ParlourRegModel> getParloursWithDeletionRequests() {
+        return parlourRepository.findByDeletionRequestedTrue();
+    }
+
+    public void save (ParlourRegModel parlourRegModel)
+    {
+        parlourRepository.save(parlourRegModel);
     }
 }
 

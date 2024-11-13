@@ -1,6 +1,7 @@
 package com.example.ParlourApp.parlour;
 
 import com.example.ParlourApp.employee.EmployeeRegModel;
+import com.example.ParlourApp.items.ItemRegModel;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,8 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "PARLOUR")
 
-public class  ParlourRegModel
-{
+public class  ParlourRegModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -39,26 +39,26 @@ public class  ParlourRegModel
     @Column(name = "otp")
     private String otp;
 
-    @Column(name = "image",columnDefinition = "bytea")
-    private byte[]image;
+    @Column(name = "image", columnDefinition = "bytea")
+    private byte[] image;
 
-    @Column(name = "coverImage",columnDefinition = "bytea")
-    private byte[]coverImage;
+    @Column(name = "coverImage", columnDefinition = "bytea")
+    private byte[] coverImage;
 
     @Column(name = "licenseNumber")
     private Long licenseNumber;
 
-    @Column(name="licenseImage")
-    private byte[]licenseImage;
+    @Column(name = "licenseImage")
+    private byte[] licenseImage;
 
 
     @Column(name = "ratings")
-    private Integer ratings=0;
+    private Integer ratings = 0;
 
-    @Column(name="location")
+    @Column(name = "location")
     private String location;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
     @Column(name = "latitude")
@@ -68,7 +68,7 @@ public class  ParlourRegModel
     private Double longitude;
 
 
-    @Column(name="status",nullable = false)
+    @Column(name = "status", nullable = false)
     private Integer status;
 
 
@@ -79,29 +79,57 @@ public class  ParlourRegModel
 
 
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean deletionRequested=false;
+
+    public boolean getDeletionRequested()
+    {
+        return  deletionRequested;
+    }
+    public void setDeletionRequested(Boolean deletionRequested) {
+        this.deletionRequested = deletionRequested;
+    }
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean deletionApproved;
+    public Boolean getDeletionApproved() {
+        return deletionApproved;
+    }
+
+    public void setDeletionApproved(Boolean deletionApproved) {
+        this.deletionApproved = deletionApproved;
+    }
+
+    @OneToMany(mappedBy = "parlour",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonBackReference
+    private List<ItemRegModel> items=new ArrayList<>();
+
+
+
     public ParlourRegModel() {
         this.ratings = 0;
         this.roles.add("ROLE_PARLOUR");
     }
 
 
-       public ParlourRegModel(Long id, String parlourName, String phoneNumber, String password, String email, byte[] image,byte[] coverImage, Long licenseNumber, byte[] licenseImage, String location, String description, Integer status,List<String>roles) {
+    public ParlourRegModel(Long id, String parlourName, String phoneNumber, String password, String email, byte[] image, byte[] coverImage, Long licenseNumber, byte[] licenseImage, String location, String description, Integer status, List<String> roles) {
         this.id = id;
         this.parlourName = parlourName;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.email = email;
         this.image = image;
-        this.coverImage=coverImage;
+        this.coverImage = coverImage;
         this.licenseNumber = licenseNumber;
         this.licenseImage = licenseImage;
         this.location = location;
         this.description = description;
         this.status = status;
         this.ratings = 0;
-        this.roles=roles;
+        this.roles = roles;
 
     }
+
 
 
 }

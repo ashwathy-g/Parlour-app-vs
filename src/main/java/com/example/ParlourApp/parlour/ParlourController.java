@@ -67,29 +67,11 @@ public class ParlourController {
             parlourRegModel.setCoverImage(coverImage.getBytes());
             parlourRegModel.setLicenseNumber(licenseNumber);
             parlourRegModel.setLicenseImage(licenseImage.getBytes());
-//            try (InputStream imageInputStream = image.getInputStream()) {
-//                byte[] imageBytes = imageInputStream.readAllBytes();
-//                parlourRegModel.setImage(image.getBytes());
-//            }
-//            try (InputStream coverImageInputStream = coverImage.getInputStream()) {
-//                byte[] coverImageBytes = coverImageInputStream.readAllBytes();
-//                parlourRegModel.setCoverImage(coverImageBytes);
-//
-//            }
-//
-//            parlourRegModel.setLicenseNumber(licenseNumber);
-//            try (InputStream licenseInputStream = licenseImage.getInputStream()) {
-//                byte[] licenseBytes = licenseInputStream.readAllBytes();
-//                parlourRegModel.setLicenseImage(licenseBytes);
-//            }
-
             parlourRegModel.setRatings(ratings);
             parlourRegModel.setLocation(location);
             parlourRegModel.setLatitude(latitude);
             parlourRegModel.setLongitude(longitude);
             parlourRegModel.setDescription(description);
-
-
             ParlourRegModel registeredParlour = parlourService.registerParlour(parlourRegModel);
             return ResponseEntity.ok(registeredParlour);
         } catch (RuntimeException e) {
@@ -180,7 +162,7 @@ public class ParlourController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<String> updateParlour(@PathVariable Long id,
                                                 @RequestParam("parlourName") String parlourName,
                                                 @RequestParam("phoneNumber") String phoneNumber,
@@ -265,7 +247,7 @@ public class ParlourController {
         return ResponseEntity.ok(parlours);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<String>deleteParlour(@PathVariable Long id,@RequestBody Map<String,String> request) {
         try {
             String providedPassword = request.get("password");
@@ -289,8 +271,30 @@ public class ParlourController {
             }
         }
 
+        @PatchMapping("/request-deletion/{id}")
+    public ResponseEntity<String>requestDeletion(@PathVariable Long id){
+       try {
+           ParlourRegModel parlourRegModel=parlourService.getParlourById(id);
+           if (parlourRegModel==null)
+           {
+               return ResponseEntity.status(404).body("Parlour not found .");
+           }
+           parlourRegModel.setDeletionRequested(true);
+           parlourService.save(parlourRegModel);
+           String adminEmail="aswathyg.ptf@gmail.com";
+           String subject="Deletion Request from Parlour";
+           String body="Parlour" + parlourRegModel.getParlourName() + "has requested deletion .";
+           emailService.sendEmail(adminEmail,subject,body);
+           return ResponseEntity.ok("Deletion request sent to admin .");
 
+        }
+       catch(RuntimeException e)
+    {
+        return ResponseEntity.status(500).body("Error during deletion request : " +e.getMessage());
     }
 
+
+    }
+}
 
 

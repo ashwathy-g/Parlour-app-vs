@@ -2,6 +2,7 @@ package com.example.ParlourApp.admin;
 
 import com.example.ParlourApp.jwt.CustomerUserDetailsService;
 import com.example.ParlourApp.jwt.JwtUtil;
+import com.example.ParlourApp.parlour.EmailService;
 import com.example.ParlourApp.parlour.ParlourRegModel;
 import com.example.ParlourApp.parlour.ParlourService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ public class AdminController {
     CustomerUserDetailsService customerUserDetailsService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailService emailService;
 
     @PostMapping(path = "/AdminReg")
 
@@ -61,6 +64,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+
     @GetMapping("/allRegisteredParlour")
     public ResponseEntity<List<ParlourRegModel>> getAllRegisteredParlours() {
         List<ParlourRegModel> parlours = adminService.getAllRegisteredParlours();
@@ -70,6 +74,7 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/approve/{id}")
     public ResponseEntity<String> approveParlour(@PathVariable Long id, @RequestParam("status") Integer status,
@@ -84,12 +89,78 @@ public class AdminController {
         if (isAdmin) {
             boolean isApproved = adminService.approveParlour(id, status);
             if (isApproved) {
-                return ResponseEntity.ok("Parlour approved successfully");
+
+                String message = getApprovalMessage(status);
+                String email = adminService.getParlourEmailById(id);
+                String subject = "Parlour Registration Status Update";
+                emailService.sendStatusEmail(email, subject, message);
+                return ResponseEntity.ok("Parlour status updated and email sent to the owner .");
             } else {
-                return ResponseEntity.badRequest().body("Failed to approve parlour");
+                return ResponseEntity.badRequest().body("Failed to update parlour status");
             }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+        }
+    }
+
+    private String getApprovalMessage(Integer status) {
+        switch (status) {
+            case 1:
+                return "Congratulations ! Your Parlour Registration has been Approved . ";
+            case 2:
+                return "We Regret to Inform you that Your Parlour Registration has been Rejected . Please contact for more Information .";
+
+            case 3:
+                return "Your parlour registration is currently pending review. We will notify you once a decision is made.";
+            default:
+                return "Your parlour registration status has been updated.";
+
+        }
+    }
+
+    @DeleteMapping("/admin/parlour/delete/{id}")
+    public ResponseEntity<String> deleteParlourDirectly(@PathVariable Long id) {
+
+
+        try {
+            ParlourRegModel parlourRegModel = adminService.getParlourById(id);
+            if (parlourRegModel == null) {
+                return ResponseEntity.status(404).body("Parlour not found .");
+
+            }
+            adminService.deleteParlourById(id);
+            return ResponseEntity.ok("Parlour Deleted Successfully by Admin .");
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body("Error during deletion :" + e.getMessage());
+        }
+    }
+    @GetMapping("/parlour/deletion-requests")
+    public  ResponseEntity<List<ParlourRegModel>>getDeletionRequests()
+    {
+        List<ParlourRegModel>requests=adminService.getParloursWithDeletionRequests();
+        return ResponseEntity.ok(requests);
+    }
+    @PatchMapping("/approve-deletion/{id}")
+    public  ResponseEntity<String>approveDeletionRequest(@PathVariable Long id)
+    {
+        try {
+            ParlourRegModel parlourRegModel=adminService.getParlourById(id);
+            if (parlourRegModel==null||!parlourRegModel.getDeletionRequested())
+            {
+                return ResponseEntity.status(404).body("No Pending deletion request for this parlour .");
+            }
+            parlourRegModel.setDeletionApproved(true);
+            adminService.save(parlourRegModel);
+
+            String parlourEmail=parlourRegModel.getEmail();
+            String subject="Deletion Request Approved";
+            String body="Your Deletion Request has been approved by Admin . You may now Proceed with deletion .";
+            emailService.sendEmail(parlourEmail,subject,body);
+            return ResponseEntity.ok("Deletion request approved by Admin .");
+        }catch (RuntimeException e)
+        {
+            return ResponseEntity.status(500).body("Error during approval:" +e.getMessage());
         }
     }
 }
