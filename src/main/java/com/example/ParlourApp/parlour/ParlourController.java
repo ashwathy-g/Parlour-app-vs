@@ -117,32 +117,33 @@ public class ParlourController {
             return ResponseEntity.ok(response);
         }
 
-        @PostMapping("/forgot_password")
-        public ResponseEntity<Map<String,Object>>forgotPassword(@RequestBody ForgotPasswordRequest request)
+    @PostMapping("/forgot_password")
+    public ResponseEntity<Map<String,Object>>forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        String email = request.getEmail();
+        String otp = request.getOtp();
+        String newPassword = request.getNewPassword();
+        if (!otpService.validateOtp(email,otp))
         {
-            String email = request.getEmail();
-            String otp = request.getOtp();
-            String newPassword = request.getNewPassword();
-            Optional<ParlourRegModel> optionalParlour = parlourRepository.findByEmail(email);
-            if (optionalParlour.isPresent()) {
-                ParlourRegModel parlour = optionalParlour.get();
-                if (parlour.getOtp().equals(otp)) {
-                    parlour.setPassword(passwordEncoder.encode(newPassword));
-                    parlourRepository.save(parlour);
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("message", "Password reset successfully");
-                    return ResponseEntity.ok(response);
-                } else {
-                    Map<String, Object> errorResponse = new HashMap<>();
-                    errorResponse.put("error", "Invalid OTP");
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-                }
-            } else {
-                Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("error", "Parlour not found");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-            }
+            Map<String,Object>errorResponse=new HashMap<>();
+            errorResponse.put("error","Invalid or expired OTP");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
+        Optional<ParlourRegModel> optionalParlour = parlourRepository.findByEmail(email);
+        if (optionalParlour.isPresent()) {
+            ParlourRegModel parlour = optionalParlour.get();
+
+            parlour.setPassword(passwordEncoder.encode(newPassword));
+            parlourRepository.save(parlour);
+            otpService.clearOtp(email);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Password reset successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Parlour not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+    }
 
 
 
