@@ -55,7 +55,7 @@ public class RatingController
         }
     }
 
-    // New endpoint to list parlours by the number of reviews
+
     @GetMapping("/parlours-by-reviews")
     public ResponseEntity<Object> getParloursByReviews() {
         try {
@@ -66,7 +66,7 @@ public class RatingController
         }
     }
 
-    // New endpoint to list unrated parlours
+
     @GetMapping("/unrated-parlours")
     public ResponseEntity<Object> getUnratedParlours() {
         try {

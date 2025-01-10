@@ -116,7 +116,7 @@ public class ItemController
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
-    @PutMapping("/{itemId}")
+    @PutMapping("update/{itemId}")
     public ResponseEntity<ItemRegModel> updateItem(
             @PathVariable Long itemId,
             @RequestParam("itemName") String itemName,

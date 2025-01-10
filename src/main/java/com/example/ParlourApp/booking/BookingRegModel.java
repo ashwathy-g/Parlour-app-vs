@@ -30,15 +30,6 @@ public class BookingRegModel
     @Column(name="employeeId")
     private Long employeeId;
 
-    @Column(name = "categoryId")
-    private Long categoryId;
-
-    @Column(name = "subCategoryId")
-    private Long subCategoryId;
-
-    @Column(name = "subSubCategoryId")
-    private Long subSubCategoryId;
-
     @Column(name = "bookingDate")
     private LocalDate bookingDate;
 

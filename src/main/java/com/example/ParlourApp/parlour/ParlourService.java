@@ -53,6 +53,15 @@ public class ParlourService
 
 
     public ParlourRegModel registerParlour(ParlourRegModel parlourRegModel) {
+        if (parlourRepository.existsByPhoneNumber(parlourRegModel.getPhoneNumber()))
+        {
+            throw new IllegalArgumentException("Phone number already exists .Please use a different phone number .");
+
+        }
+        if (parlourRepository.existsByEmail(parlourRegModel.getEmail()))
+        {
+            throw new IllegalArgumentException("Email already exists.Please use a different email .");
+        }
         parlourRegModel.setPassword(passwordEncoder.encode(parlourRegModel.getPassword()));
         parlourRegModel.getRoles().add("ROLE_PARLOUR");
         parlourRegModel.setStatus(0);
@@ -121,11 +130,11 @@ public class ParlourService
         return employeeRepository.findByParlourId_Id(parlourId);
     }
 
-    public ParlourDetails getParlourDetails(String parlourName) {
-        ParlourRegModel parlour = getParlourByName(parlourName);
-        List<EmployeeRegModel> employees = getEmployeesByParlourId(parlour.getId());
-        return new ParlourDetails(parlour.getParlourName(), parlour.getPhoneNumber(), parlour.getEmail(), employees);
-    }
+//    public ParlourDetails getParlourDetails(String parlourName) {
+//        ParlourRegModel parlour = getParlourByName(parlourName);
+//        List<EmployeeRegModel> employees = getEmployeesByParlourId(parlour.getId());
+//        return new ParlourDetails(parlour.getParlourName(), parlour.getPhoneNumber(), parlour.getEmail(), employees);
+//    }
 
     public List<ParlourRegModel> getAllParlours() {
         return parlourRepository.findAll();

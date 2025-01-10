@@ -2,6 +2,7 @@ package com.example.ParlourApp.booking;
 
 
 
+import com.example.ParlourApp.dto.BookingRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,15 @@ public class BookingController
 {
     @Autowired
     private BookingService bookingService;
+
+    @Autowired
+    BookingRepository bookingRepository;
+//    @PostMapping("/addBooking")
+//   public ResponseEntity<?>addBooking(@RequestBody BookingRequestDto bookingRequestDto)
+//    {
+//        bookingService.addBooking(bookingRequestDto);
+//        return ResponseEntity.ok("Booking added successfully !");
+//    }
 
     @GetMapping("/day/{parlourId}/{date}")
     public ResponseEntity<List<BookingRegModel>> getOneDayBookings(

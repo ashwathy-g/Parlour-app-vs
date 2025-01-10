@@ -22,4 +22,37 @@ public class ParlourDetailsDTO
     private List<ItemDto> items;
     private List<OfferRegModel> offers;
     private List<OfferCategoryRegModel> offerCategories;
+    public ParlourDetailsDTO() {
+    }
+
+    public ParlourDetailsDTO(
+            String parlourName,
+            String phoneNumber,
+            String email,
+            byte[] image,
+            byte[] coverImage,
+            Integer ratings,
+            String location,
+            String description,
+            Integer status,
+            List<EmployeeDto> employees,
+            List<ItemDto> items,
+            List<OfferRegModel> offers,
+            List<OfferCategoryRegModel> offerCategories
+    ) {
+        this.parlourName = parlourName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.image = image;
+        this.coverImage = coverImage;
+        this.ratings = ratings;
+        this.location = location;
+        this.description = description;
+        this.status = status;
+        this.employees = employees;
+        this.items = items;
+        this.offers = offers;
+        this.offerCategories = offerCategories;
+    }
 }
+

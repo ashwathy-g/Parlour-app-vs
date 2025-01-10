@@ -39,8 +39,11 @@ public class OfferCategoryRegModel
     @Column(name = "image",columnDefinition = "bytea")
     private byte[]image;
 
-    @Column(name = "offerId") // Add this field
+    @Column(name = "offerId")
     private Long offerId;
+
+    @Column(name = "parlourId")
+    private Long parlourId;
 
     public String getDescription() {
         return description != null ? description : "No data";

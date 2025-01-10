@@ -23,6 +23,17 @@ public interface ParlourRepository extends JpaRepository<ParlourRegModel,Long> {
     Optional<ParlourRegModel> findByPhoneNumber(String phoneNumber);
 
     List<ParlourRegModel> findByDeletionRequestedTrue();
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    boolean existsByEmail(String email);
+
+
+        @Query("SELECT p FROM ParlourRegModel p WHERE FUNCTION('distance', p.latitude, p.longitude, :lat, :lng) <= :radius")
+        List<ParlourRegModel> findNearbyParlours(@Param("lat") double latitude, @Param("lng") double longitude, @Param("radius") double radius);
+
+
+
 }
 
 

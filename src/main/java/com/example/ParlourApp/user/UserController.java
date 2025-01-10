@@ -1,6 +1,7 @@
 package com.example.ParlourApp.user;
 
 import com.example.ParlourApp.dto.ForgotPasswordRequest;
+import com.example.ParlourApp.dto.ParlourDetailsDTO;
 import com.example.ParlourApp.jwt.JwtUtil;
 import com.example.ParlourApp.parlour.EmailService;
 import com.example.ParlourApp.parlour.OtpService;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -81,15 +83,25 @@ public class UserController {
         }
     }
 
-    @PostMapping("generate-Otp-for-User")
-    public ResponseEntity<Map<String, Object>> generateOtpForUsr(@RequestBody ForgotPasswordRequest request) {
-        String email = request.getEmail();
-        String otp = otpService.generateOtp(email);
-        emailService.sendOtpEmail(email, otp);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "OTP Send Successfully");
-        return ResponseEntity.ok(response);
-
+    @PostMapping("/generate-Otp-for-User")
+//    public ResponseEntity<Map<String, Object>> generateOtpForUsr(@RequestBody ForgotPasswordRequest request) {
+//        String email = request.getEmail();
+//        String otp = otpService.generateOtp(email);
+//        emailService.sendOtpEmail(email, otp);
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "OTP Send Successfully");
+//        return ResponseEntity.ok(response);
+//
+//    }
+    public ResponseEntity<?>generateUserOTP(@RequestParam String email){
+        try {
+            String otp = otpService.generateOtp(email);
+            emailService.sendOtpEmail(email,otp);
+            return new ResponseEntity<>("Otp send to "+email,HttpStatus.OK);
+        }catch (MailException e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something went wrong",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/forgotPasswordUser")

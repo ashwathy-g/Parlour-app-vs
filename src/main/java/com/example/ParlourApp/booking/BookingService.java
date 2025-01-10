@@ -1,5 +1,6 @@
 package com.example.ParlourApp.booking;
 
+import com.example.ParlourApp.dto.BookingRequestDto;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,13 @@ public class BookingService
 {
     @Autowired
     private BookingRepository bookingRepository;
+
+//    public void addBooking(BookingRequestDto bookingRequestDto)
+//    {   BookingRegModel bookingRegModel1=new BookingRegModel();
+//        bookingRegModel1.setUserId(bookingRequestDto.getUserId());
+//        bookingRegModel1.setuserName()
+//        bookingRepository.save(bookingRegModel);
+//    }
 
     public List<BookingRegModel> getOneDayBookings(Long parlourId, LocalDate date) {
         return bookingRepository.findByParlourIdAndBookingDate(parlourId, date);

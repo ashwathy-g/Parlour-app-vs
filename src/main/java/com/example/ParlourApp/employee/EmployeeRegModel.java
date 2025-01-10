@@ -1,14 +1,17 @@
 package com.example.ParlourApp.employee;
 
 import com.example.ParlourApp.parlour.ParlourRegModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "employee")
+@CrossOrigin
 public class EmployeeRegModel
 {
     @Id
@@ -19,7 +22,13 @@ public class EmployeeRegModel
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parlour_id")
-    private ParlourRegModel parlourId;
+    private ParlourRegModel parlour;
+
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "parlour_id", nullable = false)
+//    @JsonBackReference
+//    private ParlourRegModel parlour;
+
 
 
     @Column(name = "employee_name")
@@ -40,7 +49,7 @@ public class EmployeeRegModel
 
     public EmployeeRegModel(String employeeName, ParlourRegModel parlour) {
         this.employeeName = employeeName;
-        this.parlourId = parlour;
+        this.parlour = parlour;
     }
     public EmployeeRegModel(){
 

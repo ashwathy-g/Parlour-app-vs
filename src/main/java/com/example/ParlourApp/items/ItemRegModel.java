@@ -6,10 +6,11 @@ import com.example.ParlourApp.subcategory.SubCategoryRegModel;
 import com.example.ParlourApp.subsubcategory.SubSubCategoryRegModel;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
-
+@CrossOrigin
 @Data
 @Entity
 @Table(name = "Items")

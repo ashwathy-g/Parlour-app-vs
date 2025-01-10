@@ -28,6 +28,10 @@ public class OrderDetailsService {
 
             RazorpayClient razorpayClient = new RazorpayClient(KEY, Key_Secret);
             Order order = razorpayClient.orders.create(jsonObject);
+            if (order==null)
+            {
+                throw new Exception("Failed to create Razorpay order");
+            }
             String paymentId = "";
             TransactionDetails transactionDetails = new TransactionDetails(order.get("id"), paymentId, order.get("currency"), order.get("amount"), KEY, userId);
 
@@ -37,6 +41,9 @@ public class OrderDetailsService {
                 userBillingRegModel.setOrderId(transactionDetails.getOrderId());
                 userBillingRegModel.setPaymentId(transactionDetails.getPaymentId());
                 userBillingRepository.save(userBillingRegModel);
+            }else
+            {
+                throw new Exception("User not found for ID: " +userId);
             }
             return transactionDetails;
 

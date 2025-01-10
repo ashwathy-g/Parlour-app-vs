@@ -1,5 +1,7 @@
 package com.example.ParlourApp.parlour;
 
+import com.example.ParlourApp.user.UserRegModel;
+import com.example.ParlourApp.user.UserRepository;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ public class OtpService
 {
     @Autowired
     ParlourRepository parlourRepository;
+    @Autowired
+    UserRepository userRepository;
 
 
     private final Cache<String,String> otpCache= CacheBuilder.newBuilder()
@@ -20,9 +24,12 @@ public class OtpService
     public  String generateOtp(String email) {
         String otp = String.format("%06d",new Random().nextInt(999999));
         Optional<ParlourRegModel> optionalParlourRegModel = parlourRepository.findByEmail(email);
+        Optional<UserRegModel> userRegModel = userRepository.findByEmail(email);
         if (optionalParlourRegModel.isPresent()) {
 
             otpCache.put(email, otp);
+        } else if (userRegModel.isPresent()) {
+            otpCache.put(email,otp);
         } else {
             throw new IllegalArgumentException("Email not found in the system");
         }

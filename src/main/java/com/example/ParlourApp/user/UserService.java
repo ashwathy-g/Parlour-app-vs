@@ -1,5 +1,14 @@
 package com.example.ParlourApp.user;
 
+import com.example.ParlourApp.OfferCategory.OfferCategoryRegModel;
+import com.example.ParlourApp.OfferCategory.OfferCategoryRepository;
+import com.example.ParlourApp.Offers.OfferRegModel;
+import com.example.ParlourApp.Offers.OfferRepository;
+import com.example.ParlourApp.dto.EmployeeDto;
+import com.example.ParlourApp.dto.ItemDto;
+import com.example.ParlourApp.dto.ParlourDetailsDTO;
+import com.example.ParlourApp.employee.EmployeeRepository;
+import com.example.ParlourApp.items.ItemRepository;
 import com.example.ParlourApp.parlour.ParlourRegModel;
 import com.example.ParlourApp.parlour.ParlourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +30,17 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    ItemRepository itemRepository;
 
     @Autowired
     ParlourRepository parlourRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
+    @Autowired
+    OfferRepository offerRepository;
+    @Autowired
+    OfferCategoryRepository offerCategoryRepository;
 
     public UserRegModel registerUser(String fullName, String gender, String password, String email, String phoneNumber) {
         if (fullName == null || gender == null || password == null || email == null || phoneNumber == null) {
@@ -93,3 +110,79 @@ public class UserService {
     }
 
 }
+//public List<ParlourDetailsDTO> findNearbyParlours(double latitude, double longitude, double radius) {
+//    // Get nearby parlours based on location
+//    List<ParlourRegModel> nearbyParlours = parlourRepository.findNearbyParlours(latitude, longitude, radius);
+//
+//    // Convert each ParlourRegModel to ParlourDetailsDTO
+//    return nearbyParlours.stream()
+//            .map(parlour -> {
+//                List<EmployeeDto> employees = getEmployeesByParlourId(parlour.getId());
+//                List<ItemDto> items = getItemsByParlourId(parlour.getId());
+//                List<OfferRegModel> offers = getOffersByParlourId(parlour.getId());
+//                List<OfferCategoryRegModel> offerCategories = getOfferCategoriesByParlourId(parlour.getId());
+//
+//                return new ParlourDetailsDTO(
+//                        parlour.getParlourName(),
+//                        parlour.getPhoneNumber(),
+//                        parlour.getEmail(),
+//                        parlour.getImage(),
+//                        parlour.getCoverImage(),
+//                        parlour.getRatings(),
+//                        parlour.getLocation(),
+//                        parlour.getDescription(),
+//                        parlour.getStatus(),
+//                        employees,
+//                        items,
+//                        offers,
+//                        offerCategories
+//                );
+//            })
+//            .collect(Collectors.toList());
+//}
+//
+//    // Helper methods to fetch related data
+//    private List<EmployeeDto> getEmployeesByParlourId(Long parlourId) {
+//        return employeeRepository.findByParlourId(parlourId).stream()
+//                .map(employee -> new EmployeeDto(employee.getId(), employee.getEmployeeName(), employee.getImage(),employee.getIsAvailable()))
+//                .collect(Collectors.toList());
+//    }
+//
+//    private List<ItemDto> getItemsByParlourId(Long parlourId) {
+//        return itemRepository.findByParlourId(parlourId).stream()
+//                .map(item -> {
+//                    ItemDto dto = new ItemDto();
+//                    dto.setId(item.getId());
+//                    dto.setItemName(item.getItemName());
+//                    dto.setItemImage(item.getItemImage());
+//                    if (item.getCategory()!=null)
+//                    {
+//                        dto.setCategoryId(item.getCategory().getId());
+//                        dto.setCategoryName(item.getCategory().getName());
+//                    }
+//
+//                    if (item.getSubCategory()!=null)
+//                    {
+//                        dto.setSubCategoryId(item.getSubCategory().getId());
+//                        dto.setSubCategoryName(item.getSubCategory().getName());
+//                        if (item.getSubSubCategory() != null) {
+//                        dto.setSubSubCategoryId(item.getSubSubCategory().getId());
+//                        dto.setSubSubCategoryName(item.getSubSubCategory().getName());
+//                    }
+//                    }
+//                    dto.setPrice(item.getPrice());
+//                    dto.setAvailability(item.getAvailability());
+//                    dto.setDescription(item.getDescription());
+//                    dto.setServiceTime(item.getServiceTime());
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+//    }
+//
+//    private List<OfferRegModel> getOffersByParlourId(Long parlourId) {
+//        return offerRepository.findByParlourId(parlourId);
+//    }
+//
+//    private List<OfferCategoryRegModel> getOfferCategoriesByParlourId(Long parlourId) {
+//        return offerCategoryRepository.findByParlourId(parlourId);
+//    }
