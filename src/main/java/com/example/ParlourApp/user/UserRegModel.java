@@ -18,8 +18,6 @@ public class UserRegModel
     @Column(name = "fullName")
     private String fullName;
 
-    @Column(name = "gender")
-    private String gender;
 
     @Column(name = "password")
     private String password;

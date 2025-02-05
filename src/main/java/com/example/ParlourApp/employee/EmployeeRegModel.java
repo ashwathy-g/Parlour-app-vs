@@ -24,10 +24,6 @@ public class EmployeeRegModel
     @JoinColumn(name = "parlour_id")
     private ParlourRegModel parlour;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "parlour_id", nullable = false)
-//    @JsonBackReference
-//    private ParlourRegModel parlour;
 
 
 

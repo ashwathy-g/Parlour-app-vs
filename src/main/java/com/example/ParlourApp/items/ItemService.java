@@ -3,6 +3,7 @@ package com.example.ParlourApp.items;
 import com.example.ParlourApp.category.CategoryRegModel;
 import com.example.ParlourApp.category.CategoryRepository;
 import com.example.ParlourApp.category.CategoryService;
+import com.example.ParlourApp.dto.ItemDto;
 import com.example.ParlourApp.parlour.ParlourRegModel;
 import com.example.ParlourApp.parlour.ParlourRepository;
 import com.example.ParlourApp.subcategory.SubCategoryRegModel;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,12 +25,12 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Validated
-public class ItemService
-{
+public class ItemService {
     @Autowired
     ItemRepository itemRepository;
     @Autowired
@@ -68,6 +70,7 @@ public class ItemService
     public ParlourRegModel findParlourById(Long id) {
         return parlourRepository.findById(id).orElseThrow(() -> new RuntimeException("Parlour not found"));
     }
+
     public List<ItemRegModel> getAllItems() {
         return itemRepository.findAll();
     }
@@ -76,7 +79,7 @@ public class ItemService
         return itemRepository.findById(itemId);
     }
 
-    public Optional<ItemRegModel> updateItem(Long itemId, String itemName, MultipartFile itemImage, double price, Long categoryId, Long subCategoryId, Long subSubCategoryId,Long parlourId, String serviceTime, String description) {
+    public Optional<ItemRegModel> updateItem(Long itemId, String itemName, MultipartFile itemImage, double price, Long categoryId, Long subCategoryId, Long subSubCategoryId, Long parlourId, String serviceTime, String description) {
         Optional<ItemRegModel> optionalItem = itemRepository.findById(itemId);
         if (optionalItem.isPresent()) {
             ItemRegModel existingItem = optionalItem.get();
@@ -85,7 +88,7 @@ public class ItemService
             if (itemImage != null && !itemImage.isEmpty()) {
                 try {
                     existingItem.setItemImage(itemImage.getBytes());
-                }catch (IOException e){
+                } catch (IOException e) {
                     throw new RuntimeException("Failed to convert MultipartFile to byte[]", e);
                 }
             }
@@ -93,7 +96,7 @@ public class ItemService
             existingItem.setPrice(BigDecimal.valueOf(price));
             CategoryRegModel category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
             SubCategoryRegModel subCategory = subCategoryRepository.findById(subCategoryId).orElseThrow(() -> new RuntimeException("SubCategory not found"));
-            SubSubCategoryRegModel subSubCategory=subSubCategoryRepository.findById(subSubCategoryId).orElseThrow(()->new RuntimeException("SubSubCategory not found"));
+            SubSubCategoryRegModel subSubCategory = subSubCategoryRepository.findById(subSubCategoryId).orElseThrow(() -> new RuntimeException("SubSubCategory not found"));
             ParlourRegModel parlour = parlourRepository.findById(parlourId).orElseThrow(() -> new RuntimeException("Parlour not found"));
 
             existingItem.setCategory(category);
@@ -113,21 +116,39 @@ public class ItemService
             return Optional.empty();
         }
     }
-
+    @Transactional
     public void deleteItem(Long itemId) {
         itemRepository.deleteById(itemId);
     }
+
     private void validateItem(ItemRegModel itemRegModel) {
         if (itemRegModel.getCategory() == null) {
             throw new NullPointerException("Category cannot be null.");
         }
     }
-    public List<ItemRegModel>getItemsById(Long parlourId)
+
+
+
+    public List<ItemDto> getItemsByParlourId(Long parlourId)
+
     {
-        return itemRepository.findByParlourId_Id(parlourId);
+        List<ItemRegModel>itemRegModelList=itemRepository.findByParlourId(parlourId);
+        return itemRegModelList.stream().map(itemRegModel -> {
+            ItemDto itemDto=new ItemDto();
+            itemDto.setId(itemRegModel.getId());
+            itemDto.setItemName(itemRegModel.getItemName());
+            itemDto.setItemImage(itemRegModel.getItemImage());
+            itemDto.setCategoryName(itemRegModel.getCategory().getCategoryName());
+            itemDto.setSubCategoryName(itemRegModel.getSubCategory().getSubCategoryName());
+            itemDto.setSubSubCategoryName(itemRegModel.getSubSubCategory().getSubSubCategoryName());
+            itemDto.setPrice(itemRegModel.getPrice());
+            itemDto.setAvailability(itemRegModel.getAvailability());
+            itemDto.setServiceTime(itemRegModel.getServiceTime());
+            return itemDto;
+        }).collect(Collectors.toList());
+
     }
 }
-
 
 
 

@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/SubSubCategory")
+@RequestMapping("/api/SubSubCategory")
 public class SubSubCategoryController
 {
     @Autowired
@@ -22,11 +22,13 @@ public class SubSubCategoryController
     @PostMapping("/add_Sub")
     public ResponseEntity<SubSubCategoryRegModel> addSubSubCategory( @RequestParam("name") String name,
                                                                     @RequestParam("subCategoryId") Long subCategoryId,
-                                                                    @RequestParam("image") MultipartFile image) {
+                                                                    @RequestParam(value = "image",required = false) MultipartFile image) {
         SubSubCategoryRegModel subSubCategoryRegModel =new SubSubCategoryRegModel();
         subSubCategoryRegModel.setName(name);
         try {
-            subSubCategoryRegModel.setImage(image.getBytes());
+            if (image!=null&&!image.isEmpty()) {
+                subSubCategoryRegModel.setImage(image.getBytes());
+            }
 
         }catch (IOException e)
         {

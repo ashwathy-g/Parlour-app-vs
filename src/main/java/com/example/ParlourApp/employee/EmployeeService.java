@@ -6,11 +6,14 @@ import com.example.ParlourApp.parlour.ParlourRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +36,45 @@ public class EmployeeService
         return employeeRepository.save(employeeRegModel);
     }
    public Optional<EmployeeRegModel>getEmployeeById(Long employeeId)
+
   {
     return employeeRepository.findById(employeeId);
   }
-    public List<EmployeeDto> getEmployeesByParlourName(String parlourName) {
-        List<EmployeeDto> employees = employeeRepository.findEmployeesByParlourName(parlourName);
-        log.info("Retrieved employee names for parlour '{}': {}", parlourName, employees);
-        return employees;
+
+
+    public ResponseEntity<List<EmployeeDto>> getEmployeesByParlourName(String parlourName) {
+        List<EmployeeDto> employeeDtoList = new ArrayList<>();
+        List<EmployeeRegModel> employeeRegModelList = employeeRepository.findEmployeesByParlourName(parlourName);
+        if (!employeeRegModelList.isEmpty()){
+            for (EmployeeRegModel employeeRegModel :employeeRegModelList){
+                EmployeeDto employeeDto = new EmployeeDto();
+                employeeDto.setId(employeeRegModel.getId());
+                employeeDto.setEmployeeName(employeeRegModel.getEmployeeName());
+                employeeDto.setImage(employeeRegModel.getImage());
+                employeeDto.setIsAvailable(employeeRegModel.getIsAvailable());
+                employeeDtoList.add(employeeDto);
+            }
+            return new ResponseEntity<>(employeeDtoList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.BAD_REQUEST);
+    }
+    public ResponseEntity<List<EmployeeDto>>getEmployeeByParlourId(Long parlourId)
+    {
+        List<EmployeeDto>employeeDtoList=new ArrayList<>();
+        List<EmployeeRegModel>employeeRegModelList=employeeRepository.findEmployeeByParlourId(parlourId);
+        if (!employeeRegModelList.isEmpty()){
+            for (EmployeeRegModel employeeRegModel:employeeRegModelList)
+            {
+                EmployeeDto employeeDto=new EmployeeDto();
+                employeeDto.setId(employeeRegModel.getId());
+                employeeDto.setEmployeeName(employeeRegModel.getEmployeeName());
+                employeeDto.setImage(employeeRegModel.getImage());
+                employeeDto.setIsAvailable(employeeRegModel.getIsAvailable());
+                employeeDtoList.add(employeeDto);
+            }
+            return new ResponseEntity<>(employeeDtoList,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.BAD_REQUEST);
     }
     public Optional<EmployeeRegModel> updateEmployee(Long employeeId, String employeeName, MultipartFile image)
     {
@@ -74,5 +109,7 @@ public void deleteEmployee(Long employeeId)
     }
     employeeRepository.deleteById(employeeId);
 }
+
+
 }
 

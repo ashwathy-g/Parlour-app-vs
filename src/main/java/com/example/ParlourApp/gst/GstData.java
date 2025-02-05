@@ -19,4 +19,7 @@ public class GstData
     @Column(name = "amount")
     private  Double amount;
 
+    @Column(name = "percentage")
+    private Double percentage;
+
 }

@@ -33,18 +33,18 @@ public class GstController
           }
 
       }
-    @PutMapping("/updateGst/{Id}")
-    public ResponseEntity<GstData> updateGst(@PathVariable Long Id,@RequestBody GstData gstData)
+    @PutMapping("/updateGst")
+    public ResponseEntity<GstData> updateGst(@RequestParam Long Id,@RequestBody GstData gstData)
     {
-        Optional<GstData> updatedGst = gstService.updategst(Id,gstData);
+        Optional<GstData> updatedGst = gstService.updateGst(Id,gstData);
         if (updatedGst.isPresent()) {
             return ResponseEntity.ok(updatedGst.get());
         } else {
             return ResponseEntity.notFound().build();
         }
     }
-    @DeleteMapping("deleteGst/{Id}")
-    public ResponseEntity<String>deleteGst(@PathVariable Long Id)
+    @DeleteMapping("/deleteGst")
+    public ResponseEntity<String>deleteGst(@RequestParam Long Id)
     {
         gstService.deleteGst(Id);
         return ResponseEntity.ok("Gst deleted Successfully.");

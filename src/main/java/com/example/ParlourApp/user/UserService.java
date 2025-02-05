@@ -42,8 +42,8 @@ public class UserService {
     @Autowired
     OfferCategoryRepository offerCategoryRepository;
 
-    public UserRegModel registerUser(String fullName, String gender, String password, String email, String phoneNumber) {
-        if (fullName == null || gender == null || password == null || email == null || phoneNumber == null) {
+    public UserRegModel registerUser(String fullName, String password, String email, String phoneNumber) {
+        if (fullName == null ||  password == null || email == null || phoneNumber == null) {
             return null;
         }
         Optional<UserRegModel> existingUserByPhone = userRepository.findByPhoneNumber(phoneNumber);
@@ -62,7 +62,6 @@ public class UserService {
 
         UserRegModel userRegModel = new UserRegModel();
         userRegModel.setFullName(fullName);
-        userRegModel.setGender(gender);
         userRegModel.setPassword(passwordEncoder.encode(password));
         userRegModel.setEmail(email);
         userRegModel.setPhoneNumber(phoneNumber);

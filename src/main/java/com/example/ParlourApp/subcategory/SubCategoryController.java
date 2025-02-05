@@ -11,7 +11,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/SubCategory")
+@RequestMapping("/api/SubCategory")
 public class SubCategoryController
 {
     @Autowired
@@ -21,7 +21,7 @@ public class SubCategoryController
 
     public ResponseEntity<SubCategoryRegModel> addSubCategory(@RequestParam("name") String name,
                                                               @RequestParam("categoryId") Integer categoryId,
-                                                              @RequestParam("image") MultipartFile image){
+                                                              @RequestParam(value = "image",required = false) MultipartFile image){
 
          SubCategoryRegModel subCategoryRegModel=new SubCategoryRegModel();
          subCategoryRegModel.setName(name);

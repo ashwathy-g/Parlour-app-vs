@@ -2,6 +2,7 @@ package com.example.ParlourApp.category;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,24 +13,24 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/Categories")
+@RequestMapping("/api/Categories")
 public class CategoryController
 {
     @Autowired
     CategoryService categoryService;
 
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")       //,consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
     @PostMapping(value = "/add")
 
     public ResponseEntity<CategoryRegModel> addCategory(@RequestParam ("name")String name,
-                                                        @RequestParam("image") MultipartFile image) {
+                                                        @RequestParam(value = "image",required = false) MultipartFile image) {
         CategoryRegModel categoryRegModel=new CategoryRegModel();
         categoryRegModel.setName(name);
-        CategoryRegModel addedCategory = categoryService.addCategory(categoryRegModel,image);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedCategory);
+        CategoryRegModel categoryRegModel1=categoryService.addCategory(categoryRegModel,image);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryRegModel1);
     }
- @GetMapping("/{id}")
- public ResponseEntity<CategoryRegModel>getCategoryById_id(@PathVariable Long id)
+ @GetMapping("/id")
+ public ResponseEntity<CategoryRegModel>getCategoryById_id(@RequestParam Long id)
  {
      Optional<CategoryRegModel>categoryRegModelOptional=categoryService.getCategoryById_id(id);
      if (categoryRegModelOptional.isPresent())

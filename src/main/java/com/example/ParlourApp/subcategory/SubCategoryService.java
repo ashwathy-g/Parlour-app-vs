@@ -28,7 +28,9 @@ public class SubCategoryService
     }
     public SubCategoryRegModel addSubCategory(SubCategoryRegModel subCategoryRegModel, MultipartFile image) {
         try {
-            subCategoryRegModel.setImage(image.getBytes());
+            if (image!=null&&!image.isEmpty()) {
+                subCategoryRegModel.setImage(image.getBytes());
+            }
             return subCategoryRepository.save(subCategoryRegModel);
         } catch (IOException e) {
             e.printStackTrace();

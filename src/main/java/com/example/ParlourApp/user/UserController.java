@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/user")
+@RequestMapping(path = "/api/user")
 public class UserController {
     @Autowired
     UserService userService;
@@ -41,7 +41,7 @@ public class UserController {
 
     @PostMapping(path = "/UserReg")
     public ResponseEntity<?> register(@RequestBody UserRegModel userRegModel) {
-        UserRegModel registeredUser = userService.registerUser(userRegModel.getFullName(),  userRegModel.getGender(), userRegModel.getPassword(), userRegModel.getEmail(), userRegModel.getPhoneNumber());
+        UserRegModel registeredUser = userService.registerUser(userRegModel.getFullName(),  userRegModel.getPassword(), userRegModel.getEmail(), userRegModel.getPhoneNumber());
         if (registeredUser == null) {
             // Check if the reason for failure is a duplicate phone number or email
             if (userService.isUserExistsByPhoneNumber(userRegModel.getPhoneNumber())) {
@@ -109,6 +109,12 @@ public class UserController {
         String email = request.getEmail();
         String otp = request.getOtp();
         String newPassword = request.getNewPassword();
+        if (newPassword==null||newPassword.isEmpty())
+        {
+            Map<String,Object>errorResponse=new HashMap<>();
+            errorResponse.put("error","New password cannot be null or empty");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
         if (!otpService.validateOtp(email, otp)) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Invalid or expired OTP");

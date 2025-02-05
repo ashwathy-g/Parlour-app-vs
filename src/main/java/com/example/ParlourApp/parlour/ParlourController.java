@@ -23,7 +23,7 @@ import java.util.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/parlour")
+@RequestMapping("/api/parlour")
 public class ParlourController {
     @Autowired
     private ParlourService parlourService;
@@ -165,8 +165,8 @@ public class ParlourController {
 
 
 
-    @GetMapping("/ParlourStatus/{parlourId}")
-    public ResponseEntity<ParlourStatusResponse> getParlourStatus(@PathVariable Long parlourId) {
+    @GetMapping("/ParlourStatus")
+    public ResponseEntity<ParlourStatusResponse> getParlourStatus(@RequestParam Long parlourId) {
         ParlourRegModel parlour = parlourService.getParlourById(parlourId);
         if (parlour!= null) {
 
@@ -181,8 +181,8 @@ public class ParlourController {
         }
     }
 
-    @PutMapping("/parlour/update//{id}")
-    public ResponseEntity<String> updateParlour(@PathVariable Long id,
+    @PutMapping("/update")
+    public ResponseEntity<String> updateParlour(@RequestParam Long id,
                                                 @RequestParam("parlourName") String parlourName,
                                                 @RequestParam("phoneNumber") String phoneNumber,
                                                 @RequestParam("password") String password,
@@ -240,8 +240,8 @@ public class ParlourController {
 //        ParlourDetails parlourDetails = parlourService.getParlourDetails(parlourName);
 //        return ResponseEntity.ok(parlourDetails);
 //    }
-    @GetMapping("/{id}")
-    public ResponseEntity<List<ParlourDetailsDTO>> getAllParlourDetails(@PathVariable Long id){
+    @GetMapping("/id")
+    public ResponseEntity<List<ParlourDetailsDTO>> getAllParlourDetails(@RequestParam Long id){
         try {
             Optional<ParlourRegModel>parlourRegModelOptional=parlourRepository.findById(id);
             if (parlourRegModelOptional.isPresent()){
@@ -267,8 +267,8 @@ public class ParlourController {
         return ResponseEntity.ok(parlours);
     }
 
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<String>deleteParlour(@PathVariable Long id,@RequestBody Map<String,String> request) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String>deleteParlour(@RequestParam Long id,@RequestBody Map<String,String> request) {
         try {
             String providedPassword = request.get("password");
             ParlourRegModel parlourRegModel = parlourService.getParlourById(id);
@@ -291,8 +291,8 @@ public class ParlourController {
         }
     }
 
-    @PatchMapping("/request-deletion/{id}")
-    public ResponseEntity<String>requestDeletion(@PathVariable Long id){
+    @PatchMapping("/request-deletion")
+    public ResponseEntity<String>requestDeletion(@RequestParam Long id){
         try {
             ParlourRegModel parlourRegModel=parlourService.getParlourById(id);
             if (parlourRegModel==null)

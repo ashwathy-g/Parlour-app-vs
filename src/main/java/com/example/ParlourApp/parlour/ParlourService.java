@@ -171,7 +171,7 @@ public class ParlourService
                 parlourDetailsDTO.setEmployees(employeeDtoList);
             }
 
-            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId_Id(id);
+            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(id);
             List<ItemDto> itemDtoList = new ArrayList<>();
             if (!itemRegModelList.isEmpty()) {
                 for (ItemRegModel itemRegModel : itemRegModelList) {
@@ -186,15 +186,12 @@ public class ParlourService
                     CategoryRegModel category = itemRegModel.getCategory();
                     SubCategoryRegModel subCategory = itemRegModel.getSubCategory();
                     SubSubCategoryRegModel subSubCategory = itemRegModel.getSubSubCategory();
-                    itemDto.setCategoryId(itemRegModel.getCategoryId());
+
                     itemDto.setCategoryName(category.getName());
-                    itemDto.setCategoryImage(category.getImage());
-                    itemDto.setSubCategoryId(itemRegModel.getSubCategoryId());
+
                     itemDto.setSubCategoryName(subCategory.getName());
-                    itemDto.setSubCategoryImage(subCategory.getImage());
-                    itemDto.setSubSubCategoryId(itemRegModel.getSubSubCategoryId());
+
                     itemDto.setSubSubCategoryName(subSubCategory.getName());
-                    itemDto.setSubSubCategoryImage(subSubCategory.getImage());                    itemDtoList.add(itemDto);
 
                 }
                 parlourDetailsDTO.setItems(itemDtoList);
@@ -239,7 +236,7 @@ public class ParlourService
             offerDto.setOfferCategories(offerCategoryDtoList);
 
 
-            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId_Id(parlourId);
+            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(parlourId);
             if (itemRegModelList.isEmpty()) {
                 System.out.println("No items found for parlourId: " + parlourId);
             } else {
@@ -257,21 +254,17 @@ public class ParlourService
                 itemDto.setServiceTime(itemRegModel.getServiceTime());
                 itemDto.setDescription(itemRegModel.getDescription());
                 if (itemRegModel.getCategory() != null) {
-                    itemDto.setCategoryId(itemRegModel.getCategory().getId());
+
                     itemDto.setCategoryName(itemRegModel.getCategory().getName());
-                    itemDto.setCategoryImage(itemRegModel.getCategory().getImage());
+
 
                 }
                 if (itemRegModel.getSubCategory() != null) {
-                    itemDto.setSubCategoryId(itemRegModel.getSubCategory().getId());
                     itemDto.setSubCategoryName(itemRegModel.getSubCategory().getName());
-                    itemDto.setSubCategoryImage(itemRegModel.getSubCategory().getImage());
-                }
+                                 }
                 if (itemRegModel.getSubSubCategory() != null) {
-                    itemDto.setSubSubCategoryId(itemRegModel.getSubSubCategory().getId());
                     itemDto.setSubSubCategoryName(itemRegModel.getSubSubCategory().getName());
-                    itemDto.setSubSubCategoryImage(itemRegModel.getSubSubCategory().getImage());
-                }
+                              }
 
                 itemDtoList.add(itemDto);
             }

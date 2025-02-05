@@ -11,18 +11,22 @@ import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<EmployeeRegModel,Long>
 {
-    @Query("SELECT new com.example.ParlourApp.dto.EmployeeDto(e.id,e.employeeName,e.image,e.isAvailable) "+ "FROM EmployeeRegModel e WHERE e.parlour.parlourName=:parlourName")
+//    @Query("SELECT new com.example.ParlourApp.dto.EmployeeDto(e.id,e.employeeName,e.image,e.isAvailable) "+ "FROM EmployeeRegModel e WHERE e.parlour.parlourName=:parlourName")
+//
 
-
-List<EmployeeDto> findEmployeesByParlourName(@Param( "parlourName") String parlourName);
+//List<EmployeeDto> findEmployeesByParlourName(@Param( "parlourName") String parlourName);
 
     Optional<EmployeeRegModel> findByEmployeeName(String employeeName);
 
     List<EmployeeRegModel> findByParlourId_Id(Long parlourId);
-    List<EmployeeRegModel> findByParlourId_IdAndIsAvailableTrue(Long parlourId);
+
 
 
     @Query("SELECT e FROM EmployeeRegModel e WHERE e.parlour.id = :parlourId")
     List<EmployeeRegModel> findByParlourId(@Param("parlourId") Long parlourId);
 
+    @Query("SELECT e FROM EmployeeRegModel e WHERE e.parlour.parlourName = :parlourName")
+    List<EmployeeRegModel> findEmployeesByParlourName(String parlourName);
+
+    List<EmployeeRegModel> findEmployeeByParlourId(Long parlourId);
 }

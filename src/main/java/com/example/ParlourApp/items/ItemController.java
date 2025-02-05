@@ -2,6 +2,7 @@ package com.example.ParlourApp.items;
 
 import com.example.ParlourApp.category.CategoryRegModel;
 import com.example.ParlourApp.category.CategoryService;
+import com.example.ParlourApp.dto.ItemDto;
 import com.example.ParlourApp.jwt.JwtUtil;
 import com.example.ParlourApp.parlour.ParlourRegModel;
 import com.example.ParlourApp.parlour.ParlourRepository;
@@ -30,7 +31,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/Items")
+@RequestMapping("/api/Items")
 public class ItemController
 {
     @Autowired
@@ -109,16 +110,16 @@ public class ItemController
         return ResponseEntity.ok(items);
     }
 
-    @GetMapping("/{itemId}")
-    public ResponseEntity<ItemRegModel>getItemById(@PathVariable Long itemId)
+    @GetMapping("/itemId")
+    public ResponseEntity<ItemRegModel>getItemById(@RequestParam Long itemId)
     {
         Optional<ItemRegModel> item=itemService.getItemById(itemId);
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
-    @PutMapping("update/{itemId}")
+    @PutMapping("update")
     public ResponseEntity<ItemRegModel> updateItem(
-            @PathVariable Long itemId,
+            @RequestParam Long itemId,
             @RequestParam("itemName") String itemName,
             @RequestParam(value = "itemImage", required = false) MultipartFile itemImage,
             @RequestParam("price") double price,
@@ -132,10 +133,22 @@ public class ItemController
         Optional<ItemRegModel> updatedItem = itemService.updateItem(itemId, itemName, itemImage, price, categoryId, subCategoryId,subSubCategoryId,parlourId, serviceTime, description);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-    @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String>deleteItem(@RequestParam Long itemId)
+    {
         itemService.deleteItem(itemId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Item deleted Successfully.");
+    }
+
+    @GetMapping("/itemByParlourId")
+    public ResponseEntity<List<ItemDto>>getItemsByParlourId(@RequestParam Long parlourId)
+    {
+        List<ItemDto>items=itemService.getItemsByParlourId(parlourId);
+        if (items.isEmpty())
+        {
+            return  ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(items);
     }
 
 

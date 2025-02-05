@@ -20,7 +20,7 @@ public class GstService {
         return gstRepository.save(gstData);
     }
 
-    public Optional<GstData> updategst(Long id, GstData gstData)
+    public Optional<GstData> updateGst(Long id, GstData gstData)
     {
         Optional<GstData>existingGst=gstRepository.findById(id);
         if (existingGst.isPresent())

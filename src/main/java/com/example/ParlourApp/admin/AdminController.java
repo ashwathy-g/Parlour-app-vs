@@ -20,7 +20,7 @@ import java.util.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/admin")
+@RequestMapping(path = "/api/admin")
 @Slf4j
 public class AdminController {
     @Autowired
@@ -74,8 +74,8 @@ public class AdminController {
         }
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/approve/{id}")
-    public ResponseEntity<String> approveParlour(@PathVariable Long id, @RequestParam("status") Integer status,
+    @PutMapping("/approve")
+    public ResponseEntity<String> approveParlour(@RequestParam Long id, @RequestParam("status") Integer status,
                                                  @RequestHeader(name = "Authorization") String token) {
         String jwt = token.substring(7);
         String username = jwtUtil.extractUsername(jwt);
@@ -114,8 +114,8 @@ public class AdminController {
 
             }
         }
-    @DeleteMapping("/admin/parlour/delete/{id}")
-    public ResponseEntity<String> deleteParlourDirectly(@PathVariable Long id) {
+    @DeleteMapping("/parlour/delete")
+    public ResponseEntity<String> deleteParlourDirectly(@RequestParam Long id) {
 
 
         try {
@@ -137,8 +137,8 @@ public class AdminController {
         List<ParlourRegModel>requests=adminService.getParloursWithDeletionRequests();
         return ResponseEntity.ok(requests);
     }
-    @PatchMapping("/approve-deletion/{id}")
-    public  ResponseEntity<String>approveDeletionRequest(@PathVariable Long id)
+    @PatchMapping("/approve-deletion")
+    public  ResponseEntity<String>approveDeletionRequest(@RequestParam Long id)
     {
         try {
             ParlourRegModel parlourRegModel=adminService.getParlourById(id);

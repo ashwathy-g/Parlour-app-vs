@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/api/employees")
 public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
@@ -50,6 +50,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error adding employee: " + e.getMessage());
         }
     }
+
 //    public ResponseEntity<EmployeeRegModel> addEmployee(@RequestParam String employeeName,
 //                                                        @RequestParam Long parlourId,
 //                                                        @RequestParam MultipartFile image)throws IOException
@@ -60,20 +61,31 @@ public class EmployeeController {
 //    }
 
     @GetMapping("/by-parlourName")
-    public ResponseEntity<List<EmployeeDto>> getEmployeeNames(@RequestParam String parlourName) {
-        List<EmployeeDto> employees = employeeService.getEmployeesByParlourName(parlourName);
-        return ResponseEntity.ok(employees);
+//    public ResponseEntity<List<EmployeeDto>> getEmployeeNames(@RequestParam String parlourName) {
+//        List<EmployeeDto> employees = employeeService.getEmployeesByParlourName(parlourName);
+//        return ResponseEntity.ok(employees);
+//    }
+
+    public ResponseEntity<List<EmployeeDto>> getEmployeesByParlourName(@RequestParam String parlourName) {
+        return employeeService.getEmployeesByParlourName(parlourName);
     }
+
+    @GetMapping("/by-parlourId")
+    public ResponseEntity<List<EmployeeDto>>getEmployeesByParlourId(@RequestParam Long parlourId)
+    {
+        return employeeService.getEmployeeByParlourId(parlourId);
+    }
+
     @GetMapping("/employeeById")
-    public ResponseEntity<EmployeeRegModel>getEmployeeById(@PathVariable Long employeeId)
+    public ResponseEntity<EmployeeRegModel>getEmployeeById(@RequestParam Long employeeId)
     {
         Optional<EmployeeRegModel> employee=employeeService.getEmployeeById(employeeId);
         return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
-    @PutMapping("/updateEmployee/{employeeId}")
-    public ResponseEntity<EmployeeRegModel> updateEmployees(@PathVariable Long employeeId,
+    @PutMapping("/updateEmployee")
+    public ResponseEntity<EmployeeRegModel> updateEmployees(@RequestParam Long employeeId,
                                                             @RequestParam String employeeName,
                                                             @RequestParam MultipartFile image) {
         Optional<EmployeeRegModel> updatedEmployee = employeeService.updateEmployee(employeeId, employeeName, image);
@@ -83,8 +95,8 @@ public class EmployeeController {
             return ResponseEntity.notFound().build();
         }
     }
-        @DeleteMapping("delete/{employeeId}")
-        public ResponseEntity<String>deleteEmployee(@PathVariable Long employeeId)
+        @DeleteMapping("delete")
+        public ResponseEntity<String>deleteEmployee(@RequestParam Long employeeId)
         {
             employeeService.deleteEmployee(employeeId);
             return ResponseEntity.ok("Employee deleted Successfully.");

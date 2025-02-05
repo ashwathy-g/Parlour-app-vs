@@ -16,12 +16,17 @@ public class CategoryService
     CategoryRepository categoryRepository;
     public CategoryRegModel addCategory(CategoryRegModel categoryRegModel, MultipartFile image) {
         try {
+if (image!=null&&!image.isEmpty())
+{
+    categoryRegModel.setImage(image.getBytes());
+}else {
+    categoryRegModel.setImage(null);
+}
 
 
-            categoryRegModel.setImage(image.getBytes());
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Error saving image",e);
         }
         return categoryRepository.save(categoryRegModel);
     }
