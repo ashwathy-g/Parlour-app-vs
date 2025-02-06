@@ -1,11 +1,15 @@
 package com.example.ParlourApp.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "USER_REG")
 public class UserRegModel
@@ -35,5 +39,13 @@ public class UserRegModel
 
     @Transient
     private String token;
+    public UserRegModel(Integer id, String fullName,  String phoneNumber, String email,  String token) {
+        this.id = id;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.token = token;
+    }
+
 
 }

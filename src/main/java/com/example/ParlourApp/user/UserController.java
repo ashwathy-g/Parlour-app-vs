@@ -64,7 +64,15 @@ public class UserController {
                     .collect(Collectors.toList());
             UserDetails userDetails = new User(authenticatedUser.getPhoneNumber(), authenticatedUser.getPassword(), authorities);
             String token = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok(token);
+            UserRegModel userRegModel1=new UserRegModel
+                    (
+            authenticatedUser.getId(),
+            authenticatedUser.getFullName(),
+            authenticatedUser.getPhoneNumber(),
+            authenticatedUser.getEmail(),
+            token);
+
+            return ResponseEntity.ok(userRegModel1);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
         }
