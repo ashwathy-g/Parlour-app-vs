@@ -1,9 +1,6 @@
 package com.example.ParlourApp.user;
 
-import com.example.ParlourApp.OfferCategory.OfferCategoryRegModel;
-import com.example.ParlourApp.OfferCategory.OfferCategoryRepository;
-import com.example.ParlourApp.Offers.OfferRegModel;
-import com.example.ParlourApp.Offers.OfferRepository;
+
 import com.example.ParlourApp.dto.EmployeeDto;
 import com.example.ParlourApp.dto.ItemDto;
 import com.example.ParlourApp.dto.ParlourDetailsDTO;
@@ -37,10 +34,7 @@ public class UserService {
     ParlourRepository parlourRepository;
     @Autowired
     EmployeeRepository employeeRepository;
-    @Autowired
-    OfferRepository offerRepository;
-    @Autowired
-    OfferCategoryRepository offerCategoryRepository;
+
 
     public UserRegModel registerUser(String fullName, String password, String email, String phoneNumber) {
         if (fullName == null ||  password == null || email == null || phoneNumber == null) {

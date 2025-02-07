@@ -1,7 +1,6 @@
 package com.example.ParlourApp.dto;
 
-import com.example.ParlourApp.OfferCategory.OfferCategoryRegModel;
-import com.example.ParlourApp.Offers.OfferRegModel;
+
 import lombok.Data;
 
 import java.util.List;
@@ -20,8 +19,7 @@ public class ParlourDetailsDTO
     private Integer status;
     private List<EmployeeDto> employees;
     private List<ItemDto> items;
-    private List<OfferRegModel> offers;
-    private List<OfferCategoryRegModel> offerCategories;
+
     public ParlourDetailsDTO() {
     }
 
@@ -36,10 +34,9 @@ public class ParlourDetailsDTO
             String description,
             Integer status,
             List<EmployeeDto> employees,
-            List<ItemDto> items,
-            List<OfferRegModel> offers,
-            List<OfferCategoryRegModel> offerCategories
-    ) {
+            List<ItemDto> items
+
+            ) {
         this.parlourName = parlourName;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -51,8 +48,7 @@ public class ParlourDetailsDTO
         this.status = status;
         this.employees = employees;
         this.items = items;
-        this.offers = offers;
-        this.offerCategories = offerCategories;
+
     }
 }
 

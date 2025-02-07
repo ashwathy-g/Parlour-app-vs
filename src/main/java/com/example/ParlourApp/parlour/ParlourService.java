@@ -1,9 +1,6 @@
 package com.example.ParlourApp.parlour;
 
-import com.example.ParlourApp.OfferCategory.OfferCategoryRegModel;
-import com.example.ParlourApp.OfferCategory.OfferCategoryRepository;
-import com.example.ParlourApp.Offers.OfferRegModel;
-import com.example.ParlourApp.Offers.OfferRepository;
+
 import com.example.ParlourApp.admin.AdminRegModel;
 import com.example.ParlourApp.category.CategoryRegModel;
 import com.example.ParlourApp.dto.*;
@@ -46,10 +43,6 @@ public class ParlourService
 
     @Autowired
     ItemRepository itemRepository;
-    @Autowired
-    OfferRepository offerRepository;
-    @Autowired
-    OfferCategoryRepository offerCategoryRepository;
 
 
     public ParlourRegModel registerParlour(ParlourRegModel parlourRegModel) {
@@ -141,140 +134,140 @@ public class ParlourService
 
     }
 
-    public ResponseEntity<List<ParlourDetailsDTO>> getParlourDetailsById(Long id) {
-        List<ParlourDetailsDTO> parlourDetailsDTOList = new ArrayList<>();
-        Optional<ParlourRegModel> parlourRegModelOptional = parlourRepository.findById(id);
-        if (parlourRegModelOptional.isPresent()) {
-            ParlourRegModel parlourRegModel = parlourRegModelOptional.get();
-            ParlourDetailsDTO parlourDetailsDTO = new ParlourDetailsDTO();
-            parlourDetailsDTO.setParlourName(parlourRegModel.getParlourName());
-            parlourDetailsDTO.setPhoneNumber(parlourRegModel.getPhoneNumber());
-            parlourDetailsDTO.setEmail(parlourRegModel.getEmail());
-            parlourDetailsDTO.setImage(parlourRegModel.getImage());
-            parlourDetailsDTO.setCoverImage(parlourRegModel.getCoverImage());
-            parlourDetailsDTO.setRatings(parlourRegModel.getRatings());
-            parlourDetailsDTO.setDescription(parlourRegModel.getDescription());
-            parlourDetailsDTO.setStatus(parlourRegModel.getStatus());
-            parlourDetailsDTO.setLocation(parlourRegModel.getLocation());
-
-            List<EmployeeRegModel> employeeRegModelOptional = employeeRepository.findByParlourId_Id(id);
-            List<EmployeeDto> employeeDtoList = new ArrayList<>();
-            if (!employeeRegModelOptional.isEmpty()) {
-                for (EmployeeRegModel employeeRegModel : employeeRegModelOptional) {
-                    EmployeeDto employeeDto = new EmployeeDto();
-                    employeeDto.setId(employeeRegModel.getId());
-                    employeeDto.setEmployeeName(employeeRegModel.getEmployeeName());
-                    employeeDto.setImage(employeeRegModel.getImage());
-                    employeeDto.setAvailable(employeeRegModel.getIsAvailable());
-                    employeeDtoList.add(employeeDto);
-                }
-                parlourDetailsDTO.setEmployees(employeeDtoList);
-            }
-
-            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(id);
-            List<ItemDto> itemDtoList = new ArrayList<>();
-            if (!itemRegModelList.isEmpty()) {
-                for (ItemRegModel itemRegModel : itemRegModelList) {
-                    ItemDto itemDto = new ItemDto();
-                    itemDto.setId(itemRegModel.getId());
-                    itemDto.setItemName(itemRegModel.getItemName());
-                    itemDto.setItemImage(itemRegModel.getItemImage());
-                    itemDto.setPrice(itemRegModel.getPrice());
-                    itemDto.setAvailability(itemRegModel.getAvailability());
-                    itemDto.setServiceTime(itemRegModel.getServiceTime());
-                    itemDto.setDescription(itemRegModel.getDescription());
-                    CategoryRegModel category = itemRegModel.getCategory();
-                    SubCategoryRegModel subCategory = itemRegModel.getSubCategory();
-                    SubSubCategoryRegModel subSubCategory = itemRegModel.getSubSubCategory();
-
-                    itemDto.setCategoryName(category.getName());
-
-                    itemDto.setSubCategoryName(subCategory.getName());
-
-                    itemDto.setSubSubCategoryName(subSubCategory.getName());
-
-                }
-                parlourDetailsDTO.setItems(itemDtoList);
-            }
-            List<OfferRegModel> offerList = offerRepository.findByParlourId(id);
-            if (!offerList.isEmpty()) {
-                parlourDetailsDTO.setOffers(offerList);
-            } else {
-                parlourDetailsDTO.setOffers(null);  // No offers found
-            }
-            List<OfferCategoryRegModel> offerCategoryList = offerCategoryRepository.findByOfferId(id);
-            if (!offerCategoryList.isEmpty()) {
-                parlourDetailsDTO.setOfferCategories(offerCategoryList);
-            } else {
-                parlourDetailsDTO.setOfferCategories(null);  // No category-specific offers found
-            }
-
-
-            parlourDetailsDTOList.add(parlourDetailsDTO);
-        }
-        return new ResponseEntity<>(parlourDetailsDTOList, HttpStatus.OK);
-    }
-    public ResponseEntity<List<OfferDto>> getOffersByParlourId(Long parlourId) {
-        List<OfferDto> offerDtoList = new ArrayList<>();
-        List<OfferRegModel> offerRegModelList = offerRepository.findByParlourId(parlourId);
-        for (OfferRegModel offerRegModel : offerRegModelList) {
-            OfferDto offerDto = new OfferDto();
-            offerDto.setOfferId(offerRegModel.getId());
-            offerDto.setOfferName(offerRegModel.getName());
-            offerDto.setOfferDescription(offerRegModel.getDescription());
-            List<OfferCategoryRegModel> offerCategoryRegModelList = offerCategoryRepository.findByOfferId(offerRegModel.getId());
-            List<OfferCategoryDto> offerCategoryDtoList = new ArrayList<>();
-            for (OfferCategoryRegModel offerCategoryRegModel : offerCategoryRegModelList) {
-                OfferCategoryDto offerCategoryDto = new OfferCategoryDto();
-                offerCategoryDto.setCategoryId(offerCategoryRegModel.getCategoryId());
-                offerCategoryDto.setCategoryName(offerCategoryRegModel.getCategoryName());
-                offerCategoryDto.setOfferPrice(offerCategoryRegModel.getOfferPrice());
-                offerCategoryDto.setDescription(offerCategoryRegModel.getDescription());
-                offerCategoryDto.setImage(offerCategoryRegModel.getImage());
-                offerCategoryDtoList.add(offerCategoryDto);
-            }
-            offerDto.setOfferCategories(offerCategoryDtoList);
-
-
-            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(parlourId);
-            if (itemRegModelList.isEmpty()) {
-                System.out.println("No items found for parlourId: " + parlourId);
-            } else {
-                System.out.println("Items found: " + itemRegModelList.size());
-            }
-
-            List<ItemDto> itemDtoList = new ArrayList<>();
-            for (ItemRegModel itemRegModel : itemRegModelList) {
-                ItemDto itemDto = new ItemDto();
-                itemDto.setId(itemRegModel.getId());
-                itemDto.setItemName(itemRegModel.getItemName());
-                itemDto.setItemImage(itemRegModel.getItemImage());
-                itemDto.setPrice(itemRegModel.getPrice());
-                itemDto.setAvailability(itemRegModel.getAvailability());
-                itemDto.setServiceTime(itemRegModel.getServiceTime());
-                itemDto.setDescription(itemRegModel.getDescription());
-                if (itemRegModel.getCategory() != null) {
-
-                    itemDto.setCategoryName(itemRegModel.getCategory().getName());
-
-
-                }
-                if (itemRegModel.getSubCategory() != null) {
-                    itemDto.setSubCategoryName(itemRegModel.getSubCategory().getName());
-                                 }
-                if (itemRegModel.getSubSubCategory() != null) {
-                    itemDto.setSubSubCategoryName(itemRegModel.getSubSubCategory().getName());
-                              }
-
-                itemDtoList.add(itemDto);
-            }
-            offerDto.setItems(itemDtoList);
-
-            offerDtoList.add(offerDto);
-        }
-
-        return new ResponseEntity<>(offerDtoList, HttpStatus.OK);
-    }
+//    public ResponseEntity<List<ParlourDetailsDTO>> getParlourDetailsById(Long id) {
+//        List<ParlourDetailsDTO> parlourDetailsDTOList = new ArrayList<>();
+//        Optional<ParlourRegModel> parlourRegModelOptional = parlourRepository.findById(id);
+//        if (parlourRegModelOptional.isPresent()) {
+//            ParlourRegModel parlourRegModel = parlourRegModelOptional.get();
+//            ParlourDetailsDTO parlourDetailsDTO = new ParlourDetailsDTO();
+//            parlourDetailsDTO.setParlourName(parlourRegModel.getParlourName());
+//            parlourDetailsDTO.setPhoneNumber(parlourRegModel.getPhoneNumber());
+//            parlourDetailsDTO.setEmail(parlourRegModel.getEmail());
+//            parlourDetailsDTO.setImage(parlourRegModel.getImage());
+//            parlourDetailsDTO.setCoverImage(parlourRegModel.getCoverImage());
+//            parlourDetailsDTO.setRatings(parlourRegModel.getRatings());
+//            parlourDetailsDTO.setDescription(parlourRegModel.getDescription());
+//            parlourDetailsDTO.setStatus(parlourRegModel.getStatus());
+//            parlourDetailsDTO.setLocation(parlourRegModel.getLocation());
+//
+//            List<EmployeeRegModel> employeeRegModelOptional = employeeRepository.findByParlourId_Id(id);
+//            List<EmployeeDto> employeeDtoList = new ArrayList<>();
+//            if (!employeeRegModelOptional.isEmpty()) {
+//                for (EmployeeRegModel employeeRegModel : employeeRegModelOptional) {
+//                    EmployeeDto employeeDto = new EmployeeDto();
+//                    employeeDto.setId(employeeRegModel.getId());
+//                    employeeDto.setEmployeeName(employeeRegModel.getEmployeeName());
+//                    employeeDto.setImage(employeeRegModel.getImage());
+//                    employeeDto.setAvailable(employeeRegModel.getIsAvailable());
+//                    employeeDtoList.add(employeeDto);
+//                }
+//                parlourDetailsDTO.setEmployees(employeeDtoList);
+//            }
+//
+//            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(id);
+//            List<ItemDto> itemDtoList = new ArrayList<>();
+//            if (!itemRegModelList.isEmpty()) {
+//                for (ItemRegModel itemRegModel : itemRegModelList) {
+//                    ItemDto itemDto = new ItemDto();
+//                    itemDto.setId(itemRegModel.getId());
+//                    itemDto.setItemName(itemRegModel.getItemName());
+//                    itemDto.setItemImage(itemRegModel.getItemImage());
+//                    itemDto.setPrice(itemRegModel.getPrice());
+//                    itemDto.setAvailability(itemRegModel.getAvailability());
+//                    itemDto.setServiceTime(itemRegModel.getServiceTime());
+//                    itemDto.setDescription(itemRegModel.getDescription());
+//                    CategoryRegModel category = itemRegModel.getCategory();
+//                    SubCategoryRegModel subCategory = itemRegModel.getSubCategory();
+//                    SubSubCategoryRegModel subSubCategory = itemRegModel.getSubSubCategory();
+//
+//                    itemDto.setCategoryName(category.getName());
+//
+//                    itemDto.setSubCategoryName(subCategory.getName());
+//
+//                    itemDto.setSubSubCategoryName(subSubCategory.getName());
+//
+//                }
+//                parlourDetailsDTO.setItems(itemDtoList);
+//            }
+//            List<OfferRegModel> offerList = offerRepository.findByParlourId(id);
+//            if (!offerList.isEmpty()) {
+//                parlourDetailsDTO.setOffers(offerList);
+//            } else {
+//                parlourDetailsDTO.setOffers(null);  // No offers found
+//            }
+//            List<OfferCategoryRegModel> offerCategoryList = offerCategoryRepository.findByOfferId(id);
+//            if (!offerCategoryList.isEmpty()) {
+//                parlourDetailsDTO.setOfferCategories(offerCategoryList);
+//            } else {
+//                parlourDetailsDTO.setOfferCategories(null);  // No category-specific offers found
+//            }
+//
+//
+//            parlourDetailsDTOList.add(parlourDetailsDTO);
+//        }
+//        return new ResponseEntity<>(parlourDetailsDTOList, HttpStatus.OK);
+//    }
+//    public ResponseEntity<List<OfferDto>> getOffersByParlourId(Long parlourId) {
+//        List<OfferDto> offerDtoList = new ArrayList<>();
+//        List<OfferRegModel> offerRegModelList = offerRepository.findByParlourId(parlourId);
+//        for (OfferRegModel offerRegModel : offerRegModelList) {
+//            OfferDto offerDto = new OfferDto();
+//            offerDto.setOfferId(offerRegModel.getId());
+//            offerDto.setOfferName(offerRegModel.getName());
+//            offerDto.setOfferDescription(offerRegModel.getDescription());
+//            List<OfferCategoryRegModel> offerCategoryRegModelList = offerCategoryRepository.findByOfferId(offerRegModel.getId());
+//            List<OfferCategoryDto> offerCategoryDtoList = new ArrayList<>();
+//            for (OfferCategoryRegModel offerCategoryRegModel : offerCategoryRegModelList) {
+//                OfferCategoryDto offerCategoryDto = new OfferCategoryDto();
+//                offerCategoryDto.setCategoryId(offerCategoryRegModel.getCategoryId());
+//                offerCategoryDto.setCategoryName(offerCategoryRegModel.getCategoryName());
+//                offerCategoryDto.setOfferPrice(offerCategoryRegModel.getOfferPrice());
+//                offerCategoryDto.setDescription(offerCategoryRegModel.getDescription());
+//                offerCategoryDto.setImage(offerCategoryRegModel.getImage());
+//                offerCategoryDtoList.add(offerCategoryDto);
+//            }
+//            offerDto.setOfferCategories(offerCategoryDtoList);
+//
+//
+//            List<ItemRegModel> itemRegModelList = itemRepository.findByParlourId(parlourId);
+//            if (itemRegModelList.isEmpty()) {
+//                System.out.println("No items found for parlourId: " + parlourId);
+//            } else {
+//                System.out.println("Items found: " + itemRegModelList.size());
+//            }
+//
+//            List<ItemDto> itemDtoList = new ArrayList<>();
+//            for (ItemRegModel itemRegModel : itemRegModelList) {
+//                ItemDto itemDto = new ItemDto();
+//                itemDto.setId(itemRegModel.getId());
+//                itemDto.setItemName(itemRegModel.getItemName());
+//                itemDto.setItemImage(itemRegModel.getItemImage());
+//                itemDto.setPrice(itemRegModel.getPrice());
+//                itemDto.setAvailability(itemRegModel.getAvailability());
+//                itemDto.setServiceTime(itemRegModel.getServiceTime());
+//                itemDto.setDescription(itemRegModel.getDescription());
+//                if (itemRegModel.getCategory() != null) {
+//
+//                    itemDto.setCategoryName(itemRegModel.getCategory().getName());
+//
+//
+//                }
+//                if (itemRegModel.getSubCategory() != null) {
+//                    itemDto.setSubCategoryName(itemRegModel.getSubCategory().getName());
+//                                 }
+//                if (itemRegModel.getSubSubCategory() != null) {
+//                    itemDto.setSubSubCategoryName(itemRegModel.getSubSubCategory().getName());
+//                              }
+//
+//                itemDtoList.add(itemDto);
+//            }
+//            offerDto.setItems(itemDtoList);
+//
+//            offerDtoList.add(offerDto);
+//        }
+//
+//        return new ResponseEntity<>(offerDtoList, HttpStatus.OK);
+//    }
 
 
             public void deleteParlourById(Long id)

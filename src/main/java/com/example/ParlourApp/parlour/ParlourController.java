@@ -240,26 +240,26 @@ public class ParlourController {
 //        ParlourDetails parlourDetails = parlourService.getParlourDetails(parlourName);
 //        return ResponseEntity.ok(parlourDetails);
 //    }
-    @GetMapping("/id")
-    public ResponseEntity<List<ParlourDetailsDTO>> getAllParlourDetails(@RequestParam Long id){
-        try {
-            Optional<ParlourRegModel>parlourRegModelOptional=parlourRepository.findById(id);
-            if (parlourRegModelOptional.isPresent()){
-                return parlourService.getParlourDetailsById(id);
-            }return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NOT_FOUND);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    @GetMapping("/{parlourId}/offers")
-    public ResponseEntity<List<OfferDto>> getOffersByParlourId(@PathVariable Long parlourId) {
-        Optional<ParlourRegModel>parlourRegModelOptional=parlourRepository.findById(parlourId);
-        if (parlourRegModelOptional.isPresent()){
-            return parlourService.getOffersByParlourId(parlourId);
-        }return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NOT_FOUND);
-
-    }
+//    @GetMapping("/id")
+//    public ResponseEntity<List<ParlourDetailsDTO>> getAllParlourDetails(@RequestParam Long id){
+//        try {
+//            Optional<ParlourRegModel>parlourRegModelOptional=parlourRepository.findById(id);
+//            if (parlourRegModelOptional.isPresent()){
+//                return parlourService.getParlourDetailsById(id);
+//            }return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NOT_FOUND);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+//    @GetMapping("/{parlourId}/offers")
+//    public ResponseEntity<List<OfferDto>> getOffersByParlourId(@PathVariable Long parlourId) {
+//        Optional<ParlourRegModel>parlourRegModelOptional=parlourRepository.findById(parlourId);
+//        if (parlourRegModelOptional.isPresent()){
+//            return parlourService.getOffersByParlourId(parlourId);
+//        }return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NOT_FOUND);
+//
+//    }
 
     @GetMapping("/getAllParlours" )
     public ResponseEntity<List<ParlourRegModel>> getAllParlours() {
