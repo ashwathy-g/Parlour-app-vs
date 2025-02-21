@@ -102,6 +102,7 @@ public class SecurityConfig
                         .requestMatchers("/api/offer/offerId").permitAll()
                         .requestMatchers("/api/offer/getAllOffers").permitAll()
                         .requestMatchers("/api/appCharge/allCharge").permitAll()
+                        .requestMatchers("/api/employees/by-parlourId").permitAll()
 
 
 

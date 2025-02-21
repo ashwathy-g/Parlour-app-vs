@@ -35,8 +35,8 @@ public class RatingController
         }
     }
 
-    @GetMapping("/parlour/{parlourId}")
-    public ResponseEntity<Object> getRatingsByParlour (@PathVariable Long parlourId){
+    @GetMapping("/parlour/parlourId")
+    public ResponseEntity<Object> getRatingsByParlour (@RequestParam Long parlourId){
         try {
             List<RatingModel> ratings = ratingService.getRatingsByParlourId(parlourId);
             return ResponseEntity.ok(ratings);
